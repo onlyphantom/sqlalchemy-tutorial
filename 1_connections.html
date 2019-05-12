@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head>
-      <title>1_salesperson</title>
+      <title>1_connections</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
@@ -293,8 +293,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <div class="code-chunk" data-id="code-chunk-id-0" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=0, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">,</span> echo<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">Engine(sqlite:///:memory:)
-</pre></div></div><p>Notice that the <code>Engine</code> and its underlying <code>Pool</code> doesn&apos;t establish the first actual DBAPI until the <code>Engine.connect()</code> method is called, or until an operation dependent on this method (such as <code>Engine.execute()</code>) is invoked. In this way, <code>Engine</code> and <code>Pool</code>is said to have a <em>lazy initialization</em> behavior.</p>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>Notice that the <code>Engine</code> and its underlying <code>Pool</code> doesn&apos;t establish the first actual DBAPI until the <code>Engine.connect()</code> method is called, or until an operation dependent on this method (such as <code>Engine.execute()</code>) is invoked. In this way, <code>Engine</code> and <code>Pool</code>is said to have a <em>lazy initialization</em> behavior.</p>
 <blockquote>
 <p>The typical usage of <code>create_engine()</code> is once per particular database URL, held globally for the lifetime of a single application process... it is most efficient when created just once at the module level of an application, not per-object or per-function call.</p>
 </blockquote>
@@ -308,13 +307,64 @@ engine <span class="token operator">=</span> create_engine<span class="token pun
 <p>A common use-case is to procure a connection resource via the <code>Engine.connect()</code> method:</p>
 <div class="code-chunk" data-id="code-chunk-id-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=1, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
-result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;select * from response order by workshop_id desc limit 10&quot;</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id desc LIMIT 10&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>col <span class="token keyword">for</span> col <span class="token keyword">in</span> result<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;&apos;, &apos;yang robustness kok belum ya bang&apos;, &apos;Thank you,  you can teach and explain all the statistics &quot;things&quot; very clearly and make it fun. &apos;]
-[&apos;id&apos;, &apos;workshop_id&apos;, &apos;difficulty&apos;, &apos;assistants_score&apos;, &apos;knowledge&apos;, &apos;objectives&apos;, &apos;timeliness&apos;, &apos;venue_score&apos;, &apos;satisfaction_score&apos;, &apos;comments&apos;]
-</pre></div></div><p>The <code>connection</code> we created above is an instance of <code>Connection</code>, which is a <strong>proxy</strong> object for an actual DBAPI connection.</p>
-<h4 class="mume-header" id="queue-pool">Queue Pool</h4>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>The <code>connection</code> we created above is an instance of <code>Connection</code>, which is a <strong>proxy</strong> object for an actual DBAPI connection.</p>
+<h3 class="mume-header" id="resultproxyclose"><code>ResultProxy.close()</code></h3>
+
+<p>What about <code>result</code>? Well, <code>result</code> is an instance of <code>ResultProxy</code>, a <strong>proxy</strong> object that references a DBAPI cursor and provides a largely compatible inferface with that of the DBAPI cursor. The DBAPI cursor will be closed by the <code>ResultProxy</code> when all of its result rows are exhausted. A <code>ResultProxy</code> that returns no rows, such as that of an <code>UPDATE</code> statement, releases cursor resources immediately upon construction. Let&apos;s see an example of that:</p>
+<div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>Notice that after the first time, the result rows are exhausted so subsequent call to <code>print()</code> return an empty list. Similarly, when we use one of <code>fetchall()</code>, <code>fetchmany()</code> and <code>fetchone()</code> to fetch result rows, once all rows have been exhausted any subsequent rows will return an empty list.</p>
+<div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>Why is it important to learn about the <code>ResultProxy.close()</code> method so early on in the Ground Up tutorial? Because it is very fundamental to how <code>ResultProxy</code> and how return sets in general will behave. It&apos;s a concept that seasoned developers familiar to SQL or those working with ORM will often take for granted; Inexperienced developers new to SQLAlchemy however often find confusing.</p>
+<p>To add to said beginner&apos;s confusion, some of the operations don&apos;t seem all that obvious that the <code>ResultProxy.close()</code> would have been called. One common example is the <code>.first()</code> method.</p>
+<p>The <code>first()</code> method fetches the first row and then close the result set unconditionally:</p>
+<div class="code-chunk" data-id="code-chunk-id-4" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>first<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">try</span><span class="token punctuation">:</span> 
+    <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">except</span> ResourceClosedError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">&quot;Resource Closed:&quot;</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>A quick recap:</p>
+<pre data-role="codeBlock" data-info="py" class="language-python">engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">)</span> 
+<span class="token comment"># returns: Engine(sqlite:///rcsample.db)</span>
+
+connection <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>connection<span class="token punctuation">)</span>
+<span class="token comment"># returns: &lt;sqlalchemy.engine.base.Connection object at 0x1069b7b00&gt;</span>
+
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>
+<span class="token comment"># returns: &lt;sqlalchemy.engine.result.ResultProxy object at 0x1069b7b00&gt;</span>
+</pre><h4 class="mume-header" id="the-soft-close">The Soft Close</h4>
+
+<p><em>New in version 1.0.0</em><br>
+The method releases all DBAPI cursor resources but leaves the <code>ResultProxy</code> &quot;open&quot; from a semantic perspective, meaning the <code>fetchXXX()</code> methods will continue to return empty results instead of raising a <code>ResourceClosedError</code> exception :</p>
+<div class="code-chunk" data-id="code-chunk-id-5" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=5, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">try</span><span class="token punctuation">:</span> 
+    result<span class="token punctuation">.</span>_soft_close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchone<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">except</span> ResourceClosedError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">&quot;Resource Closed:&quot;</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><h3 class="mume-header" id="queue-pool">Queue Pool</h3>
 
 <p>Whenever the <code>connect()</code> or <code>execute()</code> methods are called, the <code>Engine</code> will ask the connection pool for a connection. The default connection pool, <code>QueuePool</code> will open connections to the database on an as-needed basis; As concurrent statements are executed, <code>QueuePool</code> will grow its pool of connections to a defaulot size of five, and allow a default &quot;overflow&quot; of ten.</p>
 <blockquote>
@@ -335,8 +385,37 @@ result <span class="token operator">=</span> connection<span class="token punctu
 <li><strong>pool_size</strong>: number of connections to keep open. To disable pooling, set <code>poolclass</code> to <code>NullPool</code>, a <code>pool_size</code> setting of 0 indicates no limit</li>
 <li><strong>max_overflow</strong>: number of connections to allow in connection pool &quot;overflow&quot;, that is connections that can be opened above and beyond the <code>pool_size</code> setting</li>
 </ul>
-<p>Using the Engine to execute our database commands:</p>
-<div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<hr>
+<p>Knowledge Check:</p>
+<ol>
+<li>
+<p>Use the <code>engine.table_names()</code> to print the table names from <code>rcsample.db</code>. How many tables were there?</p>
+</li>
+<li>
+<p>Create an engine just like you did in (1) and execute a SQL query to count the number of rows within the <code>employee</code> table. How many rows are there?</p>
+</li>
+</ol>
+<details>
+<summary>Hint:</summary>
+<p>
+</p><p>Hint for question (1):</p>
+<pre data-role="codeBlock" data-info="py" class="language-python"><span class="token comment"># import engine...</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">.</span>table_names<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</pre><p>Hint for question (2):</p>
+<pre data-role="codeBlock" data-info="py" class="language-python"><span class="token comment"># import engine and wrap sql command</span>
+conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT COUNT(*) FROM employee&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>scalar<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</pre><p></p>
+</details>
+<hr>
+<h3 class="mume-header" id="transactions">Transactions</h3>
+
+<div class="code-chunk" data-id="code-chunk-id-6" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=6, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT workshop_category, class_size FROM workshop LIMIT 10&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;class_size&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>col <span class="token keyword">for</span> col <span class="token keyword">in</span> result<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>Using the Engine to execute our database commands:</p>
+<div class="code-chunk" data-id="code-chunk-id-7" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=7, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
 engine<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
                <span class="token string">&apos;id INTEGER NOT NULL,&apos;</span>
@@ -344,46 +423,48 @@ engine<span class="token punctuation">.</span>execute<span class="token punctuat
                <span class="token string">&apos;PRIMARY KEY (id));&apos;</span><span class="token punctuation">)</span>
 <span class="token comment"># print list of tables name</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">.</span>table_names<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;salesperson&apos;]
-</pre></div></div><h3 class="mume-header" id="transactions">Transactions</h3>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><div class="code-chunk" data-id="code-chunk-id-8" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=8, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+conn <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result <span class="token operator">=</span> conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM workshop LIMIT 10&apos;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+allresults <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
+allresults <span class="token operator">+=</span> result<span class="token punctuation">.</span>fetchone<span class="token punctuation">(</span><span class="token punctuation">)</span>
+result<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>allresults<span class="token punctuation">)</span>
+allresults <span class="token operator">+=</span> result<span class="token punctuation">.</span>fetchmany<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>allresults<span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><div class="code-chunk" data-id="code-chunk-id-10" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=10, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
+conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+trans <span class="token operator">=</span> conn<span class="token punctuation">.</span>begin<span class="token punctuation">(</span><span class="token punctuation">)</span>
+conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
+               <span class="token string">&apos;id INTEGER NOT NULL,&apos;</span>
+               <span class="token string">&apos;name VARCHAR,&apos;</span>
+               <span class="token string">&apos;PRIMARY KEY (id));&apos;</span><span class="token punctuation">)</span>
+conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;INSERT INTO &quot;salesperson&quot; (name)&apos;</span>
+             <span class="token string">&apos;VALUES (&quot;John Doe&quot;), (&quot;Margaret&quot;), (&quot;Anna&quot;)&apos;</span><span class="token punctuation">)</span>
+conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT age FROM salesperson&apos;</span><span class="token punctuation">)</span>
+trans<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-<div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
-conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
-trans <span class="token operator">=</span> conn<span class="token punctuation">.</span>begin<span class="token punctuation">(</span><span class="token punctuation">)</span>
-conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
-               <span class="token string">&apos;id INTEGER NOT NULL,&apos;</span>
-               <span class="token string">&apos;name VARCHAR,&apos;</span>
-               <span class="token string">&apos;PRIMARY KEY (id));&apos;</span><span class="token punctuation">)</span>
-conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;INSERT INTO &quot;salesperson&quot; (name)&apos;</span>
-             <span class="token string">&apos;VALUES (&quot;John Doe&quot;), (&quot;Margaret&quot;), (&quot;Anna&quot;)&apos;</span><span class="token punctuation">)</span>
-rows <span class="token operator">=</span> conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM salesperson LIMIT 2&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span>
-trans<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token operator">**</span>row<span class="token punctuation">}</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> rows<span class="token punctuation">]</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[{&apos;id&apos;: 1, &apos;name&apos;: &apos;John Doe&apos;}, {&apos;id&apos;: 2, &apos;name&apos;: &apos;Margaret&apos;}]
-</pre></div></div><div class="code-chunk" data-id="code-chunk-id-4" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
-conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
-trans <span class="token operator">=</span> conn<span class="token punctuation">.</span>begin<span class="token punctuation">(</span><span class="token punctuation">)</span>
-conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
-               <span class="token string">&apos;id INTEGER NOT NULL,&apos;</span>
-               <span class="token string">&apos;name VARCHAR,&apos;</span>
-               <span class="token string">&apos;PRIMARY KEY (id));&apos;</span><span class="token punctuation">)</span>
-conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;INSERT INTO &quot;salesperson&quot; (name)&apos;</span>
-             <span class="token string">&apos;VALUES (&quot;John Doe&quot;), (&quot;Margaret&quot;), (&quot;Anna&quot;)&apos;</span><span class="token punctuation">)</span>
 results <span class="token operator">=</span> conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM salesperson&apos;</span><span class="token punctuation">)</span>
-trans<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">{</span>column<span class="token punctuation">:</span>value <span class="token keyword">for</span> column<span class="token punctuation">,</span> value <span class="token keyword">in</span> result<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[{&apos;id&apos;: 1, &apos;name&apos;: &apos;John Doe&apos;}, {&apos;id&apos;: 2, &apos;name&apos;: &apos;Margaret&apos;}, {&apos;id&apos;: 3, &apos;name&apos;: &apos;Anna&apos;}]
-</pre></div></div>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div>
       </div>
       <div class="md-sidebar-toc"><ul>
 <li><a href="#ground-up-tutorial-to-sqlalchemy">Ground Up tutorial to SQLAlchemy</a>
 <ul>
 <li><a href="#understanding-the-engine-object">Understanding the <code>Engine</code> object</a></li>
-<li><a href="#working-with-engines-directly">Working with Engines directly</a><br>
-* <a href="#queue-pool">Queue Pool</a>
+<li><a href="#working-with-engines-directly">Working with Engines directly</a>
 <ul>
+<li><a href="#resultproxyclose"><code>ResultProxy.close()</code></a>
+<ul>
+<li><a href="#the-soft-close">The Soft Close</a></li>
+</ul>
+</li>
+<li><a href="#queue-pool">Queue Pool</a></li>
 <li><a href="#transactions">Transactions</a></li>
 </ul>
 </li>

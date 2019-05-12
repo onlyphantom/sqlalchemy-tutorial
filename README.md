@@ -10,7 +10,7 @@ The `Engine` is the starting point for any SQLAlchemy application. The official 
 ![](assets/sqla_engine_arch.png)
 The code below creates an `engine`, which rereferences a **Dialect** object tailored for SQLite and a **Pool** object which will establish a DBAPI connection when a connection request is first received.
 
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+```py
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///:memory:', echo=True)
 print(engine)
@@ -30,7 +30,7 @@ The Engine can be used in one of two ways:
 
 A common use-case is to procure a connection resource via the `Engine.connect()` method:
 
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+```py
 from sqlalchemy import create_engine
 connection = create_engine('sqlite:///rcsample.db').connect()
 result = connection.execute("select * from response order by workshop_id desc limit 10")
@@ -65,7 +65,7 @@ The several parameters in our engine creation call above:
 - **max_overflow**: number of connections to allow in connection pool "overflow", that is connections that can be opened above and beyond the `pool_size` setting
 
 Using the Engine to execute our database commands:
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+```py
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///:memory:')
 engine.execute('CREATE TABLE "salesperson" ('
