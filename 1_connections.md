@@ -1,6 +1,11 @@
 # Ground Up tutorial to SQLAlchemy
+To truly appreciate the inner workings of SQLAlchemy, we need to fully grasp **four main objects** that are foundational to the SQLAlchemy module:
+- `Engine`
+- `Connection`
+- `Transaction`
+- `Session`
 
-## Understanding the `Engine` object
+## Understanding `Engine` and `Connection`
 The `Engine` is the starting point for any SQLAlchemy application. The official documentation calls it the **home base** for the actual database and its DBAPI, and a `Dialect` which describes how to talk to a specific kind of database/DBAPI combination.
 ![](assets/sqla_engine_arch.png)
 
@@ -107,7 +112,7 @@ try:
 except ResourceClosedError as e:
     print("Resource Closed:", e)
 ```
-
+Instead of the exception, the try/except block returns a `None`.
 
 ###  Queue Pool
 
@@ -158,7 +163,98 @@ conn.execute('SELECT COUNT(*) FROM employee').scalar()
 
 ------
 
-### Transactions
+## Transactions
+We use `Transactions` directly when working with `Engine` and `Connection` objects, but rarely so when we work with SQLAlchemy ORM (we'll get to what ORM means in the next chapter). 
+
+The `Connection` object provides a `begin()` method which returns an instance of `Transaction` - this instance represents the "scope" of the transaction so that it's guaranteed to invoke one, and **only one**, of two methods:
+- `Transaction.rollback()`
+- `Transaction.commit()`
+
+The transaction "scope" completes when one of the two method above is called. The `Transaction` object is usually used within a try/except clause but it also implements a context manager interface so Python's `with` statement can be used in the following way:
+
+First example:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///salesperson.db')
+results = engine.execute('SELECT * FROM salesperson')
+print("Before transaction:", results.fetchall())
+with engine.begin() as conn:
+    conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("Marshall")')
+    conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+
+results = engine.execute('SELECT * FROM salesperson')
+print("After transaction:",results.fetchall())
+```
+Now, have we tried a simple experiment by changing the last `INSERT` clause to say `INSERT INTO "salespeople" (name)` instead of `INSERT INTO "salesperson (name)"`, what do you think would happen?
+
+To verify this, you can open `salesperson.db` using any of your favorite sqlite browser, and hopefully, you will see that Marshall is not included in the table. Yes - the earlier `INSERT` clause did not take effect as the Transaction wasn't completed. 
+
+
+
+## Not everything can be "rolled back"
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///salesperson.db')
+
+with engine.begin() as conn:
+    conn.execute('CREATE TABLE "salesperson" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR,'
+               'PRIMARY KEY (id));')
+    conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("Marshall")')
+    conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+
+results = engine.execute('SELECT * FROM salesperson')
+
+print(engine.table_names())
+print(results.fetchall())
+```
+---
+
+
+Consider the following example:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+conn = engine.connect()
+trans = conn.begin()
+try:
+    conn.execute('CREATE TABLE "salesperson" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR,'
+               'PRIMARY KEY (id));')
+    conn.execute('INSERT INTO "salespeople" (name)'
+             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+    results = conn.execute('SELECT * FROM salesperson')
+    trans.commit()
+except:
+    trans.rollback()
+print(engine.table_names())
+print(results.fetchall())
+```
+
+Using the Engine to execute our database commands:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+engine.execute('CREATE TABLE "salesperson" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR,'
+               'PRIMARY KEY (id));')
+conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+
+results = conn.execute('SELECT * FROM salesperson')
+# print list of tables name
+print(engine.table_names())
+print(results.fetchall())
+```
+
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
@@ -169,26 +265,6 @@ print([col for col in result.keys()])
 ```
 
 
-
-Using the Engine to execute our database commands:
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///:memory:')
-engine.execute('CREATE TABLE "salesperson" ('
-               'id INTEGER NOT NULL,'
-               'name VARCHAR,'
-               'PRIMARY KEY (id));')
-# print list of tables name
-print(engine.table_names())
-```
-
-
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-conn = create_engine('sqlite:///rcsample.db').connect()
-result = conn.execute('SELECT * FROM workshop LIMIT 10')
-print(result)
-```
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
