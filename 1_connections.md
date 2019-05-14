@@ -38,7 +38,7 @@ print([col for col in result.keys()])
 
 The `connection` we created above is an instance of `Connection`, which is a **proxy** object for an actual DBAPI connection.
 
-### `ResultProxy.close()`
+### Understanding `ResultProxy.close()`
 
 What about `result`? Well, `result` is an instance of `ResultProxy`, a **proxy** object that references a DBAPI cursor and provides a largely compatible inferface with that of the DBAPI cursor. The DBAPI cursor will be closed by the `ResultProxy` when all of its result rows are exhausted. A `ResultProxy` that returns no rows, such as that of an `UPDATE` statement, releases cursor resources immediately upon construction. Let's see an example of that:
 
@@ -95,7 +95,6 @@ print(result)
 # returns: <sqlalchemy.engine.result.ResultProxy object at 0x1069b7b00>
 ```
 
-
 #### The Soft Close
 
 _New in version 1.0.0_
@@ -113,6 +112,114 @@ except ResourceClosedError as e:
     print("Resource Closed:", e)
 ```
 Instead of the exception, the try/except block returns a `None`.
+
+### `RowProxy`: Like Tuples, but not really
+
+Most of what you do with SQLAlchemy involves fetching some rows from a database. At first sight, it seems like SQLAlchemy returns a tuple. Look at the following code block and pay attention to the returned value of:
+- `fetched`
+- `fetched[:2]` 
+- `len(fetched)`
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" id="row-proxy-1"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///rcsample.db')
+conn = engine.connect()
+d = {}
+
+executed = conn.execute('SELECT timeliness, satisfaction_score, comments FROM response ORDER BY workshop_id  LIMIT 1 OFFSET 8')
+fetched = executed.fetchone()
+d['timeliness'], d['satisfaction'], d['comments'] = fetched
+```
+
+The returned value from one of the `fetchXXX()` method looks and _behaves_ almost like a tuple in the way we perform indexing and slicing. `len()` also correctly prints the number of elements in the "tuple":
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="row-proxy-1"}
+print(fetched)
+print(fetched[:2])
+print(len(fetched))
+```
+
+However, it is not an instance of the `tuple` class. If it were a tuple, we wouldn't expect `fetched['comments']` to work:
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="row-proxy-1"}
+print(fetched['comments'])
+print(d)
+print(isinstance(fetched, tuple))
+print(isinstance(d, dict))
+```
+
+If it is not a `tuple`, what then could it be?
+
+Well, turns out it is a proxy, namely a `RowProxy`. This `RowProxy` allows for the values of the individual columns to be accessed in addition to the tuple-like slicing behavior. The documentation on `ResultProxy` reads:
+> Individual columns may be accessed by their integer position, case-insensitive column name, or by schema.Column object
+
+This allows us to build our dictionary `d` through accessing the value specified by column names.
+
+Let's break down the concepts from `ResultProxy` to `RowProxy` a little more:
+
+- `executed` is a `ResultProxy`. A `session.execute()` or `connection.execute()` method uses the `ResultProxy` to return its values
+- The `ResultProxy` instance is comprised of `RowProxy` instances  
+- The `RowProxy` object has two useful methods:
+    - `.items()`: This returns the key, value tuples of all the items in the row as a list
+    - `.values()`: Returns all values as a list
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="row-proxy-1"}
+print(fetched.values())
+print(isinstance(fetched.values(), list))
+print(fetched.items())
+print(isinstance(fetched.items()[0], tuple))
+```
+
+This allows us to unpack each value in the tuple in a `for` operation:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///rcsample.db')
+conn = engine.connect()
+fetched = conn.execute('SELECT timeliness, satisfaction_score FROM response ORDER BY workshop_id  LIMIT 3 OFFSET 8').fetchall()
+
+print(fetched)
+print(fetched[1].keys())
+print(fetched[1].values())
+print(fetched[0].has_key('timeliness'))
+reviews = [{col:val for col, val in eachset.items()} for eachset in fetched]
+print(reviews)
+```
+
+As we've seen, `RowProxy` is really just a proxy for values from a single cursor row. The methods found on the documentation of `RowProxy` are:
+- `has_key()`: Return True if this `RowProxy` contains the given key
+- `items()`: Return a list of types, each tuple containing a key/value pair
+- `keys()`: Return the list of keys as strings
+
+Curiously, `values()` is not a documented method, even though as we've seen above it return the values of a single cursor row as a list.
+
+
+
+
+
+
+
+Another example:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+conn = engine.connect()
+results = []
+
+conn.execute('CREATE TABLE "salesperson" ('
+           'id INTEGER NOT NULL,'
+           'name VARCHAR,'
+           'PRIMARY KEY (id));')
+conn.execute('INSERT INTO "salesperson" (name)'
+         'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+results += conn.execute('SELECT * FROM salesperson').fetchmany(3)
+
+print(results)
+print(results[0])
+print(results[0][1])
+print(results[0]['name'])
+print(isinstance(results, list))
+print(isinstance(results[0], tuple))
+```
 
 ###  Queue Pool
 
@@ -164,6 +271,8 @@ conn.execute('SELECT COUNT(*) FROM employee').scalar()
 ------
 
 ## Transactions
+In database lingo, **transaction** is a logical, atomic unit of work that contains one or more SQL statements. Database users use transaction to group SQL statements so that they are either all committed (which means applied to the database), or all rolled back. 
+
 We use `Transactions` directly when working with `Engine` and `Connection` objects, but rarely so when we work with SQLAlchemy ORM (we'll get to what ORM means in the next chapter). 
 
 The `Connection` object provides a `begin()` method which returns an instance of `Transaction` - this instance represents the "scope" of the transaction so that it's guaranteed to invoke one, and **only one**, of two methods:
@@ -172,8 +281,8 @@ The `Connection` object provides a `begin()` method which returns an instance of
 
 The transaction "scope" completes when one of the two method above is called. The `Transaction` object is usually used within a try/except clause but it also implements a context manager interface so Python's `with` statement can be used in the following way:
 
-First example:
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+import os
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///salesperson.db')
 results = engine.execute('SELECT * FROM salesperson')
@@ -186,74 +295,55 @@ with engine.begin() as conn:
 
 results = engine.execute('SELECT * FROM salesperson')
 print("After transaction:",results.fetchall())
+os.remove('salesperson.db')
 ```
 Now, have we tried a simple experiment by changing the last `INSERT` clause to say `INSERT INTO "salespeople" (name)` instead of `INSERT INTO "salesperson (name)"`, what do you think would happen?
 
 To verify this, you can open `salesperson.db` using any of your favorite sqlite browser, and hopefully, you will see that Marshall is not included in the table. Yes - the earlier `INSERT` clause did not take effect as the Transaction wasn't completed. 
 
+This follows the "A" in "ACID", which is short for **Atomicity**. All tasks of a transaction are performed or none of them are. There are no partial transactions. If a transaction starts updating 10 rows but fails after 7 rows, the database rolls back the changes to these 7 rows.
 
+### Not everything can be "rolled back"
+For an SQLAlchemy user not particularly familiar with SQL, sometimes its not obvious when an unexpected behavior is due to SQLAlchemy's design decisions or characteristics of the underlying database. One such example is the `rollback()` method.
 
-## Not everything can be "rolled back"
+Consider the following example of `Transction`. The code is similar to the context-manager one above, with one change: we're using a try/except clause instead of a context manager. This allow me to exclude a `raise()`, with the except clause is executed. 
 
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///salesperson.db')
-
-with engine.begin() as conn:
-    conn.execute('CREATE TABLE "salesperson" ('
-               'id INTEGER NOT NULL,'
-               'name VARCHAR,'
-               'PRIMARY KEY (id));')
-    conn.execute('INSERT INTO "salesperson" (name)'
-             'VALUES ("Marshall")')
-    conn.execute('INSERT INTO "salesperson" (name)'
-             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
-
-results = engine.execute('SELECT * FROM salesperson')
-
-print(engine.table_names())
-print(results.fetchall())
-```
----
-
-
-Consider the following example:
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///:memory:')
+tbl_names = engine.table_names
+print(tbl_names())
 conn = engine.connect()
 trans = conn.begin()
+results = []
 try:
     conn.execute('CREATE TABLE "salesperson" ('
                'id INTEGER NOT NULL,'
                'name VARCHAR,'
                'PRIMARY KEY (id));')
-    conn.execute('INSERT INTO "salespeople" (name)'
+    conn.execute('INSERT INTO "salesperson" (name)'
              'VALUES ("John Doe"), ("Margaret"), ("Anna")')
-    results = conn.execute('SELECT * FROM salesperson')
+    results += conn.execute('SELECT * FROM salesperson').fetchmany(3)
     trans.commit()
 except:
     trans.rollback()
-print(engine.table_names())
-print(results.fetchall())
-```
+    # raise()
 
-Using the Engine to execute our database commands:
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///:memory:')
-engine.execute('CREATE TABLE "salesperson" ('
-               'id INTEGER NOT NULL,'
-               'name VARCHAR,'
-               'PRIMARY KEY (id));')
-conn.execute('INSERT INTO "salesperson" (name)'
-             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
-
-results = conn.execute('SELECT * FROM salesperson')
-# print list of tables name
-print(engine.table_names())
-print(results.fetchall())
+print(results)
+print(tbl_names())
 ```
+Let's inspect the three `print` statements in the order of execution:
+1. `print(tbl_names)` in line 4 returns an empty list. At this point, no tables were created yet in our in-memory database.
+2. `print(results)` returns a list of `RowProxy`. Notice that while it prints like a  
+
+Supposed we repeat our experiment by changing the last `INSERT` clause to say `INSERT INTO "salespeople" (name)` instead of `INSERT INTO "salesperson (name)"`, what do you think would happen to the two `print` statements at the bottom?
+
+You may have guessed that we got two empty lists (`[]`). Except that's not what happened. As it turns out, we got an empty list (`[]`) from printing `results` but our `tbl_names()` return `['salesperson']`. 
+
+
+
+
+
 
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
