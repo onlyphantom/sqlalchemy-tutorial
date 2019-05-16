@@ -155,10 +155,28 @@ Well, turns out it is a proxy, namely a `RowProxy`. This `RowProxy` allows for t
 
 This allows us to build our dictionary `d` through accessing the value specified by column names.
 
+Like `tuple`, `RowProxy` does not support item assignment. The following code raises an exception:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="row-proxy-1"}
+print(fetched)
+try:
+    fetched[0] = 1
+except Exception as error:
+    print(error)
+
+tup = (1,2,3)
+try:
+    tup[0] = 5
+except TypeError as error:
+    print(error)
+```
+
+This may remind more experienced developers of the **immutability** trait in tuples. When we assign `5` to the first value of the tuple we get a `TypeError`: when we do it to `RowProxy` the exact same exception was raised (both are `TypeError`). 
+
 Let's break down the concepts from `ResultProxy` to `RowProxy` a little more:
 
 - `executed` is a `ResultProxy`. A `session.execute()` or `connection.execute()` method uses the `ResultProxy` to return its values
-- The `ResultProxy` instance is comprised of `RowProxy` instances  
+- When we call `fetchone()` on `ResultProxy`, a `RowProxy` instance is returned
+- When we fetch more than one row from `ResultProxy`, a `list` of `RowProxy` instances are returned
 - The `RowProxy` object has two useful methods:
     - `.items()`: This returns the key, value tuples of all the items in the row as a list
     - `.values()`: Returns all values as a list
@@ -192,33 +210,28 @@ As we've seen, `RowProxy` is really just a proxy for values from a single cursor
 
 Curiously, `values()` is not a documented method, even though as we've seen above it return the values of a single cursor row as a list.
 
+### Multiple `RowProxy` is returned as a `list`
+In the following code:
+- `executed` is a `ResultProxy`
+- Because the `ResultProxy` contains more than one value, when we call `fetchall()` it returns a `list` containing multiple instances of `RowProxy` instead. Have it contain only one row, it would have return `fetched()` as a `RowProxy`
+- `fetched[0]` points to the first value in the row, and is a `RowProxy` object
+- Additionally, because each `RowProxy` has a length of 2, it can be unpacked into a dictionary using `dict()`. A `ValueError` exception will be raised if our `RowProxy` has a length of any other value.
 
-
-
-
-
-
-Another example:
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///:memory:')
 conn = engine.connect()
-results = []
-
 conn.execute('CREATE TABLE "salesperson" ('
            'id INTEGER NOT NULL,'
            'name VARCHAR,'
            'PRIMARY KEY (id));')
 conn.execute('INSERT INTO "salesperson" (name)'
          'VALUES ("John Doe"), ("Margaret"), ("Anna")')
-results += conn.execute('SELECT * FROM salesperson').fetchmany(3)
-
-print(results)
-print(results[0])
-print(results[0][1])
-print(results[0]['name'])
-print(isinstance(results, list))
-print(isinstance(results[0], tuple))
+executed = conn.execute('SELECT * FROM salesperson')
+fetched = executed.fetchall()
+print(fetched)
+print(isinstance(fetched, list))
+print(dict(fetched))
 ```
 
 ###  Queue Pool
@@ -248,6 +261,32 @@ Knowledge Check:
 1. Use the `engine.table_names()` to print the table names from `rcsample.db`. How many tables were there? 
 
 2. Create an engine just like you did in (1) and execute a SQL query to count the number of rows within the `employee` table. How many rows are there?
+
+For question (3) to (6), use the following code:
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+conn = engine.connect()
+results = []
+
+conn.execute('CREATE TABLE "salesperson" ('
+           'id INTEGER NOT NULL,'
+           'name VARCHAR,'
+           'PRIMARY KEY (id));')
+conn.execute('INSERT INTO "salesperson" (name)'
+         'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+executed = conn.execute('SELECT * FROM salesperson')
+fetched = executed.fetchone()
+results += executed.fetchmany(3)
+```
+
+3. What is the output of `len(fetched.values())`?
+
+4. What is the output of `len(results)`?
+
+5. Is `results` an instance of `list`?
+
+6. Is `results[0]` an instance of `tuple`?
 
 <details>
 <summary>Hint:</summary>
@@ -334,11 +373,76 @@ print(tbl_names())
 ```
 Let's inspect the three `print` statements in the order of execution:
 1. `print(tbl_names)` in line 4 returns an empty list. At this point, no tables were created yet in our in-memory database.
-2. `print(results)` returns a list of `RowProxy`. Notice that while it prints like a  
+2. `print(results)` returns a list of `RowProxy` as was described above
 
 Supposed we repeat our experiment by changing the last `INSERT` clause to say `INSERT INTO "salespeople" (name)` instead of `INSERT INTO "salesperson (name)"`, what do you think would happen to the two `print` statements at the bottom?
 
 You may have guessed that we got two empty lists (`[]`). Except that's not what happened. As it turns out, we got an empty list (`[]`) from printing `results` but our `tbl_names()` return `['salesperson']`. 
+
+This brings us to another concept in database systems: **not all statements can be rolled back**. From the [MySQL Reference Manual](https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html):
+
+> Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.
+>
+> You should design your transactions not to include such statements. If you issue a statement early in a transaction that cannot be rolled back, and then another statement later fails, the full effect of the transaction cannot be rolled back in such cases by issuing a ROLLBACK statement.
+
+MySQL is not alone in how in its implementation of `ROLLBACK`. Oracle Database has this [in their documentation](https://docs.oracle.com/database/121/SQLRF/statements_4011.htm#SQLRF01110):
+
+> Oracle Database issues an implicit COMMIT under the following circumstances:
+>
+> - Before any syntactically valid data definition language (DDL) statement, even if the statement results in an error
+> 
+> - After any data definition language (DDL) statement that completes without an error
+
+In simpler English, Oracle Database issues an implicit commit after any DDL statement, [as does MySQL](https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
+
+To add to the confusion, every database handles this differently.
+- In **SQLite**, `ALTER` statements can be rolled back but not `CREATE TABLE`
+- Most DDL statements can be rolled back in **Postgres** with some exceptions including `DROP DATABASE` and `TRUNCATE`
+- Some database, like H2, [also performs an implicit commit](http://www.h2database.com/html/advanced.html) after a DDL statement
+
+My recommendation is to read the official documentation relating to your choice of database and write code to minimize the use of DDL statements in transactions (adopt a proper database migration workflow for DDL changes instead). 
+
+### What exactly is being rolled back?
+
+Look at the output of the following. Notice that there are four `.execute` commands in the `try` block. The last execution was unsuccessful because of a misspelling (`salespeople` instead of `salesperson`) so a rollback occured. 
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')
+tbl_names = engine.table_names
+conn = engine.connect()
+trans = conn.begin()
+results = []
+try:
+    conn.execute('CREATE TABLE "salesperson" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR,'
+               'PRIMARY KEY (id));')
+    conn.execute('INSERT INTO "salesperson" (name)'
+             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
+    conn.execute('ALTER TABLE salesperson ADD address VARCHAR;')
+    conn.execute('ALTER TABLE salespeople ADD emailadd VARCHAR;')
+    trans.commit()
+except:
+    print("Unsuccessful. Rolling back.")
+    trans.rollback()
+results += conn.execute('SELECT * FROM salesperson').fetchall()
+keys = conn.execute('SELECT * FROM salesperson').keys()
+vals = conn.execute('SELECT * FROM salesperson').fetchone()
+print(tbl_names())
+print(results)
+print(keys)
+print(vals)
+```
+
+While `.rollback()` is invoked, the `CREATE TABLE` was **not rolled back**. The any modifications on the database resulting from the other 3 commands, repectively `INSERT`, `ALTER` and `ALTER`,  were rolled back however. 
+
+In your mind, do the following experiment: imagine what would happen if we move the line 
+`results += conn.execute('SELECT * FROM salesperson').fetchall()`
+such that it is before the two lines that perform the `ALTER TABLE` command.
+
+Would `results` still be an empty string?
+
 
 
 
@@ -355,18 +459,6 @@ print([col for col in result.keys()])
 ```
 
 
-
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
-allresults = []
-result = connection.execute("SELECT satisfaction_score FROM response ORDER BY workshop_id LIMIT 5")
-allresults += result.fetchone()
-result.close()
-print(allresults)
-allresults += result.fetchmany(2)
-print(allresults)
-```
 
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
