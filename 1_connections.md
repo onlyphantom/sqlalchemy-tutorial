@@ -1,7 +1,8 @@
-# Ground Up tutorial to SQLAlchemy
-To truly appreciate the inner workings of SQLAlchemy, we need to fully grasp **four main objects** that are foundational to the SQLAlchemy module:
-- `Engine`
+# Ground Up tutorial to SQLAlchemy: Course 1
+To truly appreciate the inner workings of SQLAlchemy, we need to fully grasp **five main objects** that are foundational to the SQLAlchemy module:
 - `Connection`
+- `ResultProxy`
+- `RowProxy`
 - `Transaction`
 - `Session`
 
@@ -429,52 +430,30 @@ except:
 results += conn.execute('SELECT * FROM salesperson').fetchall()
 keys = conn.execute('SELECT * FROM salesperson').keys()
 vals = conn.execute('SELECT * FROM salesperson').fetchone()
-print(tbl_names())
-print(results)
-print(keys)
-print(vals)
+print(f"Tables: {tbl_names()}")
+print(f"Keys: {keys}")
+print(f"Results: {results}")
+print(f"Values: {vals}")
 ```
 
-While `.rollback()` is invoked, the `CREATE TABLE` was **not rolled back**. The any modifications on the database resulting from the other 3 commands, repectively `INSERT`, `ALTER` and `ALTER`,  were rolled back however. 
+While `.rollback()` is invoked, the `CREATE TABLE` was **not rolled back**. The any modifications on the database resulting from the other 3 commands, repectively `INSERT`, `ALTER` and `ALTER`,  were rolled back however. This explained the resulting output from `tbl_names` and `keys` but an empty list in `results`. 
 
-In your mind, do the following experiment: imagine what would happen if we move the line 
+In your mind, do the following experiment: imagine what would happen if we move the line of code:
 `results += conn.execute('SELECT * FROM salesperson').fetchall()`
 such that it is before the two lines that perform the `ALTER TABLE` command.
 
 Would `results` still be an empty string?
 
+To answer the question, it is important to realize that modifications to the database are beling rolled back, not python objects themselves. Have we move the `results += conn.execute(...)` line of code into the the `try` block and after the `INSERT INTO` command is executed, `results` would no longer be an empty list. Changes to the database are rolled back -- not changes to database objects!
 
+## Summary
 
+In coursebook (1), we've covered some of the most fundamental inner-workings of SQLAlchemy. In particular, we've learned:
 
-
-
-
-
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
-result = connection.execute("SELECT workshop_category, class_size FROM workshop LIMIT 10")
-print([row['class_size'] for row in result])
-print([col for col in result.keys()])
-```
-
-
-
-
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///:memory:')
-conn = engine.connect()
-trans = conn.begin()
-conn.execute('CREATE TABLE "salesperson" ('
-               'id INTEGER NOT NULL,'
-               'name VARCHAR,'
-               'PRIMARY KEY (id));')
-conn.execute('INSERT INTO "salesperson" (name)'
-             'VALUES ("John Doe"), ("Margaret"), ("Anna")')
-conn.execute('SELECT age FROM salesperson')
-trans.commit()
-
-results = conn.execute('SELECT * FROM salesperson')
-print([{column:value for column, value in result.items()} for result in results])
-```
+- Using `create_engine` to instantiate an `Engine` object
+- about `Connection` and using `connection.execute()`
+- fetching results with one of the `fetchXXX` triplets
+- about `ResultProxy` and `RowProxy`
+- queue pool and the Soft Close
+- `Transactions`
+- executing `ROLLBACK`
