@@ -1,4 +1,30 @@
+---
+toc:
+  depth_from: 1
+  depth_to: 4
+  ordered: true
+---
 # Ground Up tutorial to SQLAlchemy: Course 1
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+* [Ground Up tutorial to SQLAlchemy: Course 1](#ground-up-tutorial-to-sqlalchemy-course-1)
+	* [Understanding `Engine` and `Connection`](#understanding-engine-and-connection)
+	* [Working with Engines directly](#working-with-engines-directly)
+		* [Understanding `ResultProxy.close()`](#understanding-resultproxyclose)
+			* [The Soft Close](#the-soft-close)
+		* [`RowProxy`: Like Tuples, but not really](#rowproxy-like-tuples-but-not-really)
+		* [Multiple `RowProxy` is returned as a `list`](#multiple-rowproxy-is-returned-as-a-list)
+		* [Queue Pool](#queue-pool)
+	* [Transactions](#transactions)
+		* [Not everything can be "rolled back"](#not-everything-can-be-rolled-back)
+		* [What exactly is being rolled back?](#what-exactly-is-being-rolled-back)
+	* [Summary](#summary)
+
+<!-- /code_chunk_output -->
+
 To truly appreciate the inner workings of SQLAlchemy, we need to fully grasp **five main objects** that are foundational to the SQLAlchemy module:
 - `Connection`
 - `ResultProxy`

@@ -34,6 +34,32 @@
       <div class="mume markdown-preview   ">
       <h1 class="mume-header" id="ground-up-tutorial-to-sqlalchemy-course-1">Ground Up tutorial to SQLAlchemy: Course 1</h1>
 
+<div class="code-chunk" data-id="code-chunk-id-0" data-cmd="toc"><div class="input-div"><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><ul>
+<li><a href="#ground-up-tutorial-to-sqlalchemy-course-1">Ground Up tutorial to SQLAlchemy: Course 1</a>
+<ul>
+<li><a href="#understanding-engine-and-connection">Understanding <code>Engine</code> and <code>Connection</code></a></li>
+<li><a href="#working-with-engines-directly">Working with Engines directly</a>
+<ul>
+<li><a href="#understanding-resultproxyclose">Understanding <code>ResultProxy.close()</code></a>
+<ul>
+<li><a href="#the-soft-close">The Soft Close</a></li>
+</ul>
+</li>
+<li><a href="#rowproxy-like-tuples-but-not-really"><code>RowProxy</code>: Like Tuples, but not really</a></li>
+<li><a href="#multiple-rowproxy-is-returned-as-a-list">Multiple <code>RowProxy</code> is returned as a <code>list</code></a></li>
+<li><a href="#queue-pool">Queue Pool</a></li>
+</ul>
+</li>
+<li><a href="#transactions">Transactions</a>
+<ul>
+<li><a href="#not-everything-can-be-rolled-back">Not everything can be &quot;rolled back&quot;</a></li>
+<li><a href="#what-exactly-is-being-rolled-back">What exactly is being rolled back?</a></li>
+</ul>
+</li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
 <p>To truly appreciate the inner workings of SQLAlchemy, we need to fully grasp <strong>five main objects</strong> that are foundational to the SQLAlchemy module:</p>
 <ul>
 <li><code>Connection</code></li>
@@ -47,7 +73,7 @@
 <p>The <code>Engine</code> is the starting point for any SQLAlchemy application. The official documentation calls it the <strong>home base</strong> for the actual database and its DBAPI, and a <code>Dialect</code> which describes how to talk to a specific kind of database/DBAPI combination.<br>
 <img src="assets/sqla_engine_arch.png" alt></p>
 <p>The code below creates an <code>engine</code>, which rereferences a <strong>Dialect</strong> object tailored for SQLite and a <strong>Pool</strong> object which will establish a DBAPI connection when a connection request is first received.</p>
-<div class="code-chunk" data-id="code-chunk-id-0" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=0, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=1, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">,</span> echo<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">)</span>
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">Engine(sqlite:///:memory:)
@@ -63,7 +89,7 @@ engine <span class="token operator">=</span> create_engine<span class="token pun
 <h2 class="mume-header" id="working-with-engines-directly">Working with Engines directly</h2>
 
 <p>A common use-case is to procure a connection resource via the <code>Engine.connect()</code> method:</p>
-<div class="code-chunk" data-id="code-chunk-id-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=1, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id desc LIMIT 10&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>col <span class="token keyword">for</span> col <span class="token keyword">in</span> result<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
@@ -72,7 +98,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 <h3 class="mume-header" id="understanding-resultproxyclose">Understanding <code>ResultProxy.close()</code></h3>
 
 <p>What about <code>result</code>? Well, <code>result</code> is an instance of <code>ResultProxy</code>, a <strong>proxy</strong> object that references a DBAPI cursor and provides a largely compatible inferface with that of the DBAPI cursor. The DBAPI cursor will be closed by the <code>ResultProxy</code> when all of its result rows are exhausted. A <code>ResultProxy</code> that returns no rows, such as that of an <code>UPDATE</code> statement, releases cursor resources immediately upon construction. Let&apos;s see an example of that:</p>
-<div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
@@ -82,7 +108,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 []
 []
 </pre></div></div><p>Notice that after the first time, the result rows are exhausted so subsequent call to <code>print()</code> return an empty list. Similarly, when we use one of <code>fetchall()</code>, <code>fetchmany()</code> and <code>fetchone()</code> to fetch result rows, once all rows have been exhausted any subsequent rows will return an empty list.</p>
-<div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-4" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -94,7 +120,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 </pre></div></div><p>Why is it important to learn about the <code>ResultProxy.close()</code> method so early on in the Ground Up tutorial? Because it is very fundamental to how <code>ResultProxy</code> and how return sets in general will behave. It&apos;s a concept that seasoned developers familiar to SQL or those working with ORM will often take for granted; Inexperienced developers new to SQLAlchemy however often find confusing.</p>
 <p>To add to said beginner&apos;s confusion, some of the operations don&apos;t seem all that obvious that the <code>ResultProxy.close()</code> would have been called. One common example is the <code>.first()</code> method.</p>
 <p>The <code>first()</code> method fetches the first row and then close the result set unconditionally:</p>
-<div class="code-chunk" data-id="code-chunk-id-4" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-5" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=5, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
@@ -121,7 +147,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 
 <p><em>New in version 1.0.0</em><br>
 The method releases all DBAPI cursor resources but leaves the <code>ResultProxy</code> &quot;open&quot; from a semantic perspective, meaning the <code>fetchXXX()</code> methods will continue to return empty results instead of raising a <code>ResourceClosedError</code> exception :</p>
-<div class="code-chunk" data-id="code-chunk-id-5" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=5, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-6" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=6, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
 connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
@@ -142,7 +168,7 @@ None
 <li><code>fetched[:2]</code></li>
 <li><code>len(fetched)</code></li>
 </ul>
-<div class="code-chunk" data-id="row-proxy-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=6, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="row-proxy-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=7, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 d <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
@@ -151,14 +177,14 @@ executed <span class="token operator">=</span> conn<span class="token punctuatio
 fetched <span class="token operator">=</span> executed<span class="token punctuation">.</span>fetchone<span class="token punctuation">(</span><span class="token punctuation">)</span>
 d<span class="token punctuation">[</span><span class="token string">&apos;timeliness&apos;</span><span class="token punctuation">]</span><span class="token punctuation">,</span> d<span class="token punctuation">[</span><span class="token string">&apos;satisfaction&apos;</span><span class="token punctuation">]</span><span class="token punctuation">,</span> d<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token operator">=</span> fetched
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>The returned value from one of the <code>fetchXXX()</code> method looks and <em>behaves</em> almost like a tuple in the way we perform indexing and slicing. <code>len()</code> also correctly prints the number of elements in the &quot;tuple&quot;:</p>
-<div class="code-chunk" data-id="code-chunk-id-7" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=7, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">)</span>
+<div class="code-chunk" data-id="code-chunk-id-8" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=8, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>fetched<span class="token punctuation">)</span><span class="token punctuation">)</span>
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">(4, 4, &apos;workshoop is so good, more complex and more aplikatif&apos;)
 (4, 4)
 3
 </pre></div></div><p>However, it is not an instance of the <code>tuple</code> class. If it were a tuple, we wouldn&apos;t expect <code>fetched[&apos;comments&apos;]</code> to work:</p>
-<div class="code-chunk" data-id="code-chunk-id-8" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=8, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">isinstance</span><span class="token punctuation">(</span>fetched<span class="token punctuation">,</span> <span class="token builtin">tuple</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">isinstance</span><span class="token punctuation">(</span>d<span class="token punctuation">,</span> <span class="token builtin">dict</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -173,7 +199,7 @@ True
 </blockquote>
 <p>This allows us to build our dictionary <code>d</code> through accessing the value specified by column names.</p>
 <p>Like <code>tuple</code>, <code>RowProxy</code> does not support item assignment. The following code raises an exception:</p>
-<div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">)</span>
+<div class="code-chunk" data-id="code-chunk-id-10" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=10, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">)</span>
 <span class="token keyword">try</span><span class="token punctuation">:</span>
     fetched<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span>
 <span class="token keyword">except</span> Exception <span class="token keyword">as</span> error<span class="token punctuation">:</span>
@@ -200,7 +226,7 @@ tup <span class="token operator">=</span> <span class="token punctuation">(</spa
 </ul>
 </li>
 </ul>
-<div class="code-chunk" data-id="code-chunk-id-10" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=10, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">.</span>values<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<div class="code-chunk" data-id="code-chunk-id-11" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=11, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">.</span>values<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">isinstance</span><span class="token punctuation">(</span>fetched<span class="token punctuation">.</span>values<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">list</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>fetched<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">isinstance</span><span class="token punctuation">(</span>fetched<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token builtin">tuple</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -209,7 +235,7 @@ True
 [(&apos;timeliness&apos;, 4), (&apos;satisfaction_score&apos;, 4), (&apos;comments&apos;, &apos;workshoop is so good, more complex and more aplikatif&apos;)]
 True
 </pre></div></div><p>This allows us to unpack each value in the tuple in a <code>for</code> operation:</p>
-<div class="code-chunk" data-id="code-chunk-id-11" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=11, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-12" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=12, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 fetched <span class="token operator">=</span> conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT timeliness, satisfaction_score FROM response ORDER BY workshop_id  LIMIT 3 OFFSET 8&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span>
@@ -241,7 +267,7 @@ True
 <li><code>fetched[0]</code> points to the first value in the row, and is a <code>RowProxy</code> object</li>
 <li>Additionally, because each <code>RowProxy</code> has a length of 2, it can be unpacked into a dictionary using <code>dict()</code>. A <code>ValueError</code> exception will be raised if our <code>RowProxy</code> has a length of any other value.</li>
 </ul>
-<div class="code-chunk" data-id="code-chunk-id-12" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=12, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-13" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=13, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
@@ -290,7 +316,7 @@ True
 </li>
 </ol>
 <p>For question (3) to (6), use the following code:</p>
-<div class="code-chunk" data-id="code-chunk-id-13" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=13, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-14" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=14, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 results <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
@@ -340,7 +366,7 @@ conn<span class="token punctuation">.</span>execute<span class="token punctuatio
 <li><code>Transaction.commit()</code></li>
 </ul>
 <p>The transaction &quot;scope&quot; completes when one of the two method above is called. The <code>Transaction</code> object is usually used within a try/except clause but it also implements a context manager interface so Python&apos;s <code>with</code> statement can be used in the following way:</p>
-<div class="code-chunk" data-id="code-chunk-id-14" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=14, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">import</span> os
+<div class="code-chunk" data-id="code-chunk-id-15" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=15, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">import</span> os
 <span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///salesperson.db&apos;</span><span class="token punctuation">)</span>
 results <span class="token operator">=</span> engine<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM salesperson&apos;</span><span class="token punctuation">)</span>
@@ -364,7 +390,7 @@ sqlite3.OperationalError: no such table: salesperson
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File &quot;/Users/samuel/Documents/GU_sqlalchemy/nfo25ye8p_code_chunk&quot;, line 4, in <module>
+  File &quot;/Users/samuel/Documents/GU_sqlalchemy/dmkgtj8yd_code_chunk&quot;, line 4, in <module>
     results = engine.execute(&apos;SELECT * FROM salesperson&apos;)
   File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 2166, in execute
     return connection.execute(statement, *multiparams, **params)
@@ -394,7 +420,7 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sales
 
 <p>For an SQLAlchemy user not particularly familiar with SQL, sometimes its not obvious when an unexpected behavior is due to SQLAlchemy&apos;s design decisions or characteristics of the underlying database. One such example is the <code>rollback()</code> method.</p>
 <p>Consider the following example of <code>Transction</code>. The code is similar to the context-manager one above, with one change: we&apos;re using a try/except clause instead of a context manager. This allow me to exclude a <code>raise()</code>, with the except clause is executed.</p>
-<div class="code-chunk" data-id="code-chunk-id-15" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=15, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-16" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=16, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
 tbl_names <span class="token operator">=</span> engine<span class="token punctuation">.</span>table_names
 <span class="token keyword">print</span><span class="token punctuation">(</span>tbl_names<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -454,7 +480,7 @@ results <span class="token operator">=</span> <span class="token punctuation">[<
 <h3 class="mume-header" id="what-exactly-is-being-rolled-back">What exactly is being rolled back?</h3>
 
 <p>Look at the output of the following. Notice that there are four <code>.execute</code> commands in the <code>try</code> block. The last execution was unsuccessful because of a misspelling (<code>salespeople</code> instead of <code>salesperson</code>) so a rollback occured.</p>
-<div class="code-chunk" data-id="code-chunk-id-16" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=16, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
+<div class="code-chunk" data-id="code-chunk-id-17" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=17, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///:memory:&apos;</span><span class="token punctuation">)</span>
 tbl_names <span class="token operator">=</span> engine<span class="token punctuation">.</span>table_names
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
@@ -505,32 +531,32 @@ such that it is before the two lines that perform the <code>ALTER TABLE</code> c
 </ul>
 
       </div>
-      <div class="md-sidebar-toc"><ul>
+      <div class="md-sidebar-toc"><ol>
 <li><a href="#ground-up-tutorial-to-sqlalchemy-course-1">Ground Up tutorial to SQLAlchemy: Course 1</a>
-<ul>
+<ol>
 <li><a href="#understanding-engine-and-connection">Understanding <code>Engine</code> and <code>Connection</code></a></li>
 <li><a href="#working-with-engines-directly">Working with Engines directly</a>
-<ul>
+<ol>
 <li><a href="#understanding-resultproxyclose">Understanding <code>ResultProxy.close()</code></a>
-<ul>
+<ol>
 <li><a href="#the-soft-close">The Soft Close</a></li>
-</ul>
+</ol>
 </li>
 <li><a href="#rowproxy-like-tuples-but-not-really"><code>RowProxy</code>: Like Tuples, but not really</a></li>
 <li><a href="#multiple-rowproxy-is-returned-as-a-list">Multiple <code>RowProxy</code> is returned as a <code>list</code></a></li>
 <li><a href="#queue-pool">Queue Pool</a></li>
-</ul>
+</ol>
 </li>
 <li><a href="#transactions">Transactions</a>
-<ul>
+<ol>
 <li><a href="#not-everything-can-be-rolled-back">Not everything can be &quot;rolled back&quot;</a></li>
 <li><a href="#what-exactly-is-being-rolled-back">What exactly is being rolled back?</a></li>
-</ul>
+</ol>
 </li>
 <li><a href="#summary">Summary</a></li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
       <a id="sidebar-toc-btn">&#x2261;</a>
     

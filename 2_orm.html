@@ -34,6 +34,24 @@
       <div class="mume markdown-preview   ">
       <h1 class="mume-header" id="ground-up-tutorial-to-sqlalchemy-course-2">Ground Up tutorial to SQLAlchemy: Course 2</h1>
 
+<div class="code-chunk" data-id="code-chunk-id-0" data-cmd="toc"><div class="input-div"><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><ul>
+<li><a href="#ground-up-tutorial-to-sqlalchemy-course-2">Ground Up tutorial to SQLAlchemy: Course 2</a>
+<ul>
+<li><a href="#object-relational-configuration">Object-relational configuration</a>
+<ul>
+<li><a href="#declarative-base">Declarative Base</a></li>
+<li><a href="#two-types-of-mappings">Two types of Mappings</a>
+<ul>
+<li><a href="#classical-mappings">Classical Mappings</a></li>
+<li><a href="#declarative-mappings">Declarative Mappings</a></li>
+</ul>
+</li>
+<li><a href="#runtime-introspection">Runtime Introspection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p>In the first course we&apos;ve seen how to create an instance of <code>Engine</code> and we learned that the <code>Engine</code> doesn&apos;t establish a real DBAPI connection to the database until a method like <code>Engine.execute()</code> or <code>Engine.connect()</code> is used to perform <strong>a task against the database</strong>.</p>
 <p>SQLAlchemy users however, do not usually interact with the <code>Engine</code> directly once created; Instead, we bind the <code>Engine</code> to <code>sessionmaker</code> which serve as a factory for new <code>Session</code> objects. This way of working with the database (using <code>Session</code>) is different from what we&apos;ve been doing in the course thus far - it&apos;s presenting a high level and abstracted pattern of usage. This course aims to present a ground-up way of understanding this pattern, starting from the configuration.</p>
 <h2 class="mume-header" id="object-relational-configuration">Object-relational configuration</h2>
@@ -44,15 +62,113 @@
 <p>At the heart of the abstraction in the ORM pattern is the <code>Declarative</code> system, used by SQLAlchemy to define classes mapped to relational database tables. Classes mapped are defined in terms of a base class, which you can imagine as &quot;a catalog of classes and tables relative to that base&quot;. We call this the <strong>declarative base class</strong>. Usually, an application will have just one instance of this base, created using the <code>declarative_base()</code> function:</p>
 <h3 class="mume-header" id="declarative-base">Declarative Base</h3>
 
-<div class="code-chunk" data-id="base-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=0, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;base-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>declarative <span class="token keyword">import</span> declarative_base
+<div class="code-chunk" data-id="base-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=1, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;base-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>declarative <span class="token keyword">import</span> declarative_base
 Base <span class="token operator">=</span> declarative_base<span class="token punctuation">(</span><span class="token punctuation">)</span> 
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>Once we have a base, we can define any number of mapped classes in terms of it. Let&apos;s start with a single table, <code>customers</code> and a class called <code>Customer</code> which we map to this table. Within the class, we define details about the table to which we&apos;ll be mapping:</p>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><ul>
+<li><a href="#ground-up-tutorial-to-sqlalchemy-course-2">Ground Up tutorial to SQLAlchemy: Course 2</a>
+<ul>
+<li><a href="#object-relational-configuration">Object-relational configuration</a>
+<ul>
+<li><a href="#declarative-base">Declarative Base</a></li>
+<li><a href="#two-types-of-mappings">Two types of Mappings</a>
+<ul>
+<li><a href="#classical-mappings">Classical Mappings</a></li>
+<li><a href="#declarative-mappings">Declarative Mappings</a></li>
+</ul>
+</li>
+<li><a href="#runtime-introspection">Runtime Introspection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Once we have a base, we can define any number of mapped classes in terms of it. Let&apos;s start with a single table, <code>customers</code> and a class called <code>Customer</code> which we map to this table. Within the class, we define details about the table to which we&apos;ll be mapping:</p>
 <ul>
 <li>Table name</li>
 <li>Name of columns</li>
 <li>Datatypes of columns</li>
 </ul>
-<div class="code-chunk" data-id="base-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=1, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;base-1&quot; id=&quot;base-2&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> Column<span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> String
+<div class="code-chunk" data-id="base-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;base-1&quot; id=&quot;base-2&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> Column<span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> String
+<span class="token keyword">class</span> <span class="token class-name">Customer</span><span class="token punctuation">(</span>Base<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    __tablename__ <span class="token operator">=</span> <span class="token string">&apos;customers&apos;</span>
+    <span class="token builtin">id</span> <span class="token operator">=</span> Column<span class="token punctuation">(</span>Integer<span class="token punctuation">,</span> primary_key<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    name <span class="token operator">=</span> Column<span class="token punctuation">(</span>String<span class="token punctuation">)</span>
+    country <span class="token operator">=</span> Column<span class="token punctuation">(</span>String<span class="token punctuation">)</span>
+    <span class="token keyword">def</span> <span class="token function">__repr__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string-interpolation"><span class="token string">f&quot;&lt;Customer(name=</span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>name<span class="token punctuation">}</span></span><span class="token string">, country=</span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>country<span class="token punctuation">}</span></span><span class="token string">)&gt;&quot;</span></span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>A class using Declarative at a minimum needs a <code>__tablename__</code> attribute and a <code>Column</code> that is part of a primary key. SQLAlchemy doesn&apos;t make any assumption about the table to which a class refers, and has no built-in conventions for names, datatypes, or constraints.</p>
+<p>When our class is constructed, Declarative replaces all <code>Column</code> objects with special Python accessor known as <strong>descriptors</strong> in a process known as instrumentation. Through instrumentation, our <code>Customer</code> class will be provided with the means to refer to our table in a SQL context, as well as to persist and load the values of columns from the database.</p>
+<div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;base-2&quot;}" class="language-python">cust <span class="token operator">=</span> Customer<span class="token punctuation">(</span><span class="token punctuation">)</span>
+cust<span class="token punctuation">.</span><span class="token builtin">id</span> <span class="token operator">=</span> <span class="token number">3</span>
+cust<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">&quot;Mary Anne&quot;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Representative</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token builtin">id</span> <span class="token operator">=</span> <span class="token number">3</span>
+    name <span class="token operator">=</span> <span class="token string">&quot;Andy&quot;</span>
+
+rep1 <span class="token operator">=</span> Representative<span class="token punctuation">(</span><span class="token punctuation">)</span>
+rep1<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">&quot;McKinsey&quot;</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span>cust<span class="token punctuation">.</span>__tablename__<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>rep1<span class="token punctuation">.</span>name<span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">customers
+McKinsey
+</pre></div></div><p>From the code above, we are reminded that outside of what the mapping does to our class, the class remains otherwise mostly a normal Python class to which we can define any number of ordinary attributes and methods. <code>cust</code>&apos;s distinctive difference from that of a regular Python class instance is that it includes the mapper attribute (<code>cust.__mapper__</code>) informing its mapping configuration onto the <code>customers</code> table.</p>
+<h3 class="mume-header" id="two-types-of-mappings">Two types of Mappings</h3>
+
+<p>One source of confusion for developers is how there seems to be more than one way to perform a mapper configuration. To understand this, it&apos;s helpful to recognize that SQLAlchemy apps can feature two distinct styles of mapper configuration:</p>
+<ul>
+<li>The &quot;Classical&quot; style is SQLAlchemy&apos;s original mapping API</li>
+<li>The &quot;Declarative&quot; style is the richer and more succinct system we see above<br>
+They may be used interchangably as the end result is exactly the same: a user-defined class mapped by the <code>mapper()</code> function onto a selectable unit, typically a <code>Table</code>.</li>
+</ul>
+<h4 class="mume-header" id="classical-mappings">Classical Mappings</h4>
+
+<p>A <em>Classical Mapping</em> refers to the configuration style that uses the <code>mapper()</code> function directly without the Declarative system. In this classical form, the table metadata is created separately with the <code>Table</code> construct, then associated with the <code>Customer</code> class via <code>mapper()</code>:</p>
+<div class="code-chunk" data-id="classical-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;classical-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> Table<span class="token punctuation">,</span> MetaData<span class="token punctuation">,</span> Column<span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> String<span class="token punctuation">,</span> ForeignKey
+<span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>orm <span class="token keyword">import</span> mapper
+
+metadata<span class="token operator">=</span> MetaData<span class="token punctuation">(</span><span class="token punctuation">)</span>
+customer <span class="token operator">=</span> Table<span class="token punctuation">(</span><span class="token string">&apos;customer&apos;</span><span class="token punctuation">,</span> metadata<span class="token punctuation">,</span> 
+                Column<span class="token punctuation">(</span><span class="token string">&apos;id&apos;</span><span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> primary_key<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                Column<span class="token punctuation">(</span><span class="token string">&apos;name&apos;</span><span class="token punctuation">,</span> String<span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                Column<span class="token punctuation">(</span><span class="token string">&apos;country&apos;</span><span class="token punctuation">,</span> String<span class="token punctuation">(</span><span class="token number">12</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">)</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Customer</span><span class="token punctuation">(</span><span class="token builtin">object</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token punctuation">,</span> country<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>name <span class="token operator">=</span> name
+        self<span class="token punctuation">.</span>country <span class="token operator">=</span> country
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>To associate the <code>Class</code> with the <code>Table</code>, we use <code>mapper()</code>:</p>
+<pre data-role="codeBlock" data-info="py" class="language-python">mapper<span class="token punctuation">(</span>Customer<span class="token punctuation">,</span> customer<span class="token punctuation">)</span>
+</pre><p>Just for illustration purposes, let&apos;s see the print output of this <code>mapper()</code> method:</p>
+<div class="code-chunk" data-id="code-chunk-id-5" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=5, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;classical-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&apos;</span><span class="token interpolation"><span class="token punctuation">{</span>mapper<span class="token punctuation">(</span>Customer<span class="token punctuation">,</span> customer<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">&apos;</span></span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">mapped class Customer-&gt;customer
+</pre></div></div><p>Information about mapped attributes such as relationships to other classes are provided via the <code>properties</code> dictionary:</p>
+<pre data-role="codeBlock" data-info="py" class="language-python">receipt <span class="token operator">=</span> Table<span class="token punctuation">(</span><span class="token string">&apos;receipt&apos;</span><span class="token punctuation">,</span> metadata<span class="token punctuation">,</span>
+                Column<span class="token punctuation">(</span><span class="token string">&apos;id&apos;</span><span class="token punctuation">,</span> Integer<span class="token punctuation">)</span><span class="token punctuation">,</span>
+                Column<span class="token punctuation">(</span><span class="token string">&apos;customer_id&apos;</span><span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> ForeignKey<span class="token punctuation">(</span><span class="token string">&apos;customer.id&apos;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                Column<span class="token punctuation">(</span><span class="token string">&apos;amount&apos;</span><span class="token punctuation">,</span> Integer<span class="token punctuation">)</span>
+            <span class="token punctuation">)</span>
+
+mapper<span class="token punctuation">(</span>Customer<span class="token punctuation">,</span> customer<span class="token punctuation">,</span> properties<span class="token operator">=</span><span class="token punctuation">{</span>
+    <span class="token string">&apos;receipts&apos;</span><span class="token punctuation">:</span> relationship<span class="token punctuation">(</span>Receipt<span class="token punctuation">,</span> backref<span class="token operator">=</span><span class="token string">&apos;customer&apos;</span><span class="token punctuation">,</span> order_by<span class="token operator">=</span>receipt<span class="token punctuation">.</span>c<span class="token punctuation">.</span><span class="token builtin">id</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+mapper<span class="token punctuation">(</span>Receipt<span class="token punctuation">,</span> receipt<span class="token punctuation">)</span>
+</pre><p>When using classical mappings, classes must be provided directly without the benefit of the &quot;string lookup&quot; system provided by Declarative. SQL expressions are specified in terms of the <code>Table</code> objects, i.e. <code>receipt.c.id</code> and not <code>Receipt.id</code> (Class attribute) as the <code>Receipt</code> class may not yet be linked to table metadata.</p>
+<h4 class="mume-header" id="declarative-mappings">Declarative Mappings</h4>
+
+<p>We said that the two Classical and Declarative approaches are fully interchangable because ultimately, they create the same configuration:</p>
+<ul>
+<li><code>Table</code></li>
+<li>User-defined class</li>
+<li>Linking the two above with a <code>mapper()</code></li>
+</ul>
+<div class="code-chunk" data-id="declarative-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=6, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>declarative <span class="token keyword">import</span> declarative_base
+<span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> Column<span class="token punctuation">,</span> Integer<span class="token punctuation">,</span> String
+
+Base <span class="token operator">=</span> declarative_base<span class="token punctuation">(</span><span class="token punctuation">)</span> 
 <span class="token keyword">class</span> <span class="token class-name">Customer</span><span class="token punctuation">(</span>Base<span class="token punctuation">)</span><span class="token punctuation">:</span>
     __tablename__ <span class="token operator">=</span> <span class="token string">&apos;customers&apos;</span>
     <span class="token builtin">id</span> <span class="token operator">=</span> Column<span class="token punctuation">(</span>Integer<span class="token punctuation">,</span> primary_key<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
@@ -61,26 +177,43 @@ Base <span class="token operator">=</span> declarative_base<span class="token pu
     <span class="token keyword">def</span> <span class="token function">__repr__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
         <span class="token keyword">return</span> <span class="token string-interpolation"><span class="token string">f&quot;&lt;Customer(name=</span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>name<span class="token punctuation">}</span></span><span class="token string">, country=</span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>country<span class="token punctuation">}</span></span><span class="token string">)&gt;&quot;</span></span>
 
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>A class using Declarative at a minimum needs a <code>__tablename__</code> attribute and a <code>Column</code> that is part of a primary key. SQLAlchemy doesn&apos;t make any assumption about the table to which a class refers, and has no built-in conventions for names, datatypes, or constraints.</p>
-<p>When our class is constructed, Declarative replaces all <code>Column</code> objects with special Python accessor known as <strong>descriptors</strong> in a process known as instrumentation.</p>
-<div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;base-2&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span>Customer<span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">&quot;Annie&quot;</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">customers.name = :name_1
-</pre></div></div><h2 class="mume-header" id="mapping-and-mapper">Mapping and <code>Mapper()</code></h2>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><p>When we inherit from a base class, created through <code>declarative_base()</code>, instance of this class has a <code>.__mapper__</code> attribute even though we did not explicit call <code>mapper()</code> as per the Classical approach:</p>
+<div class="code-chunk" data-id="code-chunk-id-7" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=7, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&apos;</span><span class="token interpolation"><span class="token punctuation">{</span>Customer<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__mapper__<span class="token punctuation">}</span></span><span class="token string">&apos;</span></span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">mapped class Customer-&gt;customers
+</pre></div></div><h3 class="mume-header" id="runtime-introspection">Runtime Introspection</h3>
 
-
+<p>Having learned that the <code>Mapper</code> object is available from any mapped class, regardless of approaches, we shall see how to &quot;acquire&quot; the <code>Mapper</code> from a mapped class through <code>inspect()</code>:</p>
+<div class="code-chunk" data-id="code-chunk-id-8" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=8, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> inspect
+insp <span class="token operator">=</span> inspect<span class="token punctuation">(</span>Customer<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">(</span>insp<span class="token punctuation">.</span>columns<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment"># equivalent: [i for i in insp.columns]</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[Column(&apos;id&apos;, Integer(), table=<customers>, primary_key=True, nullable=False), Column(&apos;name&apos;, String(), table=<customers>), Column(&apos;country&apos;, String(), table=<customers>)]
+</customers></customers></customers></pre></div></div><p><code>Mapper.columns</code> is an ordered collection that we can view in a list, like we did above, or accessed via column names. To see an example, we can try printing <code>insp.columns.country</code> and see the following returned:</p>
+<pre data-role="codeBlock" data-info="py" class="language-python">Column<span class="token punctuation">(</span><span class="token string">&apos;country&apos;</span><span class="token punctuation">,</span> String<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> table<span class="token operator">=</span><span class="token operator">&lt;</span>customers<span class="token operator">&gt;</span><span class="token punctuation">)</span>
+</pre><p>Another useful namespace is the <code>Mapper.all_orm_descriptors</code>, which includes all mapped attributes as well as hybrids, association proxies:</p>
+<div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> inspect
+insp <span class="token operator">=</span> inspect<span class="token punctuation">(</span>Customer<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>insp<span class="token punctuation">.</span>all_orm_descriptors<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;id&apos;, &apos;__mapper__&apos;, &apos;name&apos;, &apos;country&apos;]
+</pre></div></div>
       </div>
-      <div class="md-sidebar-toc"><ul>
+      <div class="md-sidebar-toc"><ol>
 <li><a href="#ground-up-tutorial-to-sqlalchemy-course-2">Ground Up tutorial to SQLAlchemy: Course 2</a>
-<ul>
+<ol>
 <li><a href="#object-relational-configuration">Object-relational configuration</a>
-<ul>
+<ol>
 <li><a href="#declarative-base">Declarative Base</a></li>
-</ul>
+<li><a href="#two-types-of-mappings">Two types of Mappings</a>
+<ol>
+<li><a href="#classical-mappings">Classical Mappings</a></li>
+<li><a href="#declarative-mappings">Declarative Mappings</a></li>
+</ol>
 </li>
-<li><a href="#mapping-and-mapper">Mapping and <code>Mapper()</code></a></li>
-</ul>
+<li><a href="#runtime-introspection">Runtime Introspection</a></li>
+</ol>
 </li>
-</ul>
+</ol>
+</li>
+</ol>
 </div>
       <a id="sidebar-toc-btn">&#x2261;</a>
     
