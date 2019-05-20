@@ -20,9 +20,9 @@ Once we have a base, we can define any number of mapped classes in terms of it. 
 - Name of columns
 - Datatypes of columns
 
-```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="base-1"}
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="base-1" id="base-2"}
 from sqlalchemy import Column, Integer, String
-class Customer(base):
+class Customer(Base):
     __tablename__ = 'customers'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -34,6 +34,11 @@ class Customer(base):
 
 A class using Declarative at a minimum needs a `__tablename__` attribute and a `Column` that is part of a primary key. SQLAlchemy doesn't make any assumption about the table to which a class refers, and has no built-in conventions for names, datatypes, or constraints. 
 
+When our class is constructed, Declarative replaces all `Column` objects with special Python accessor known as **descriptors** in a process known as instrumentation. 
+
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" continue="base-2"}
+print(Customer.name == "Annie")
+```
 
 
 ## Mapping and `Mapper()`
