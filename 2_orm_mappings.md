@@ -17,6 +17,8 @@ toc:
 			* [Classical Mappings](#classical-mappings)
 			* [Declarative Mappings](#declarative-mappings)
 		* [Runtime Introspection](#runtime-introspection)
+					* [Knowledge Check](#knowledge-check)
+	* [Summary](#summary)
 
 <!-- /code_chunk_output -->
 
@@ -37,18 +39,6 @@ At the heart of the abstraction in the ORM pattern is the `Declarative` system, 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base() 
 ```
-
-<!-- code_chunk_output -->
-
-* [Ground Up tutorial to SQLAlchemy: Course 2](#ground-up-tutorial-to-sqlalchemy-course-2)
-	* [Object-relational configuration](#object-relational-configuration)
-		* [Declarative Base](#declarative-base)
-		* [Two types of Mappings](#two-types-of-mappings)
-			* [Classical Mappings](#classical-mappings)
-			* [Declarative Mappings](#declarative-mappings)
-		* [Runtime Introspection](#runtime-introspection)
-
-<!-- /code_chunk_output -->
 
 Once we have a base, we can define any number of mapped classes in terms of it. Let's start with a single table, `customers` and a class called `Customer` which we map to this table. Within the class, we define details about the table to which we'll be mapping:
 - Table name  
@@ -187,3 +177,63 @@ from sqlalchemy import inspect
 insp = inspect(Customer)
 print(insp.all_orm_descriptors.keys())
 ```
+
+###### Knowledge Check
+```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" id="knowledge-1"}
+import os
+from datetime import datetime
+from sqlalchemy import (
+    create_engine, Column, Integer, String, Date, ForeignKey)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+
+if os.path.exists('blog.db'):
+    os.remove('blog.db')
+
+engine = create_engine('sqlite:///blog.db')
+Session = sessionmaker(bind=engine)
+session = Session()
+Base = declarative_base()
+
+class Author(Base):
+    __tablename__ = 'author'
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+    blogs = relationship("Blogpost", backref="written")
+
+class Blogpost(Base):
+     __tablename__ = 'blogpost'
+     id = Column(Integer, primary_key=True)
+     created = Column(Date, default=datetime.now)
+     writtenby = Column(ForeignKey("author.id"))
+
+Base.metadata.create_all(engine)
+
+sherlock = Author(username="sherlock")
+blogpost1 = Blogpost(writtenby=1)
+session.add_all([sherlock, blogpost1])
+session.commit()
+```
+
+
+<details>
+<summary>Hint:</summary>
+<p>
+
+No hint yet. Adding some later.
+</p>
+</details>
+
+------
+
+## Summary
+
+In coursebook (2), we've covered some of the most fundamental inner-workings of SQLAlchemy. In particular, we've learned:
+
+- Using `create_engine` to instantiate an `Engine` object
+- about `Connection` and using `connection.execute()`
+- fetching results with one of the `fetchXXX` triplets
+- about `ResultProxy` and `RowProxy`
+- queue pool and the Soft Close
+- `Transactions`
+- executing `ROLLBACK`

@@ -284,7 +284,7 @@ The several parameters in our engine creation call above:
 - **max_overflow**: number of connections to allow in connection pool "overflow", that is connections that can be opened above and beyond the `pool_size` setting
 
 ---
-Knowledge Check:
+###### Knowledge Check
 1. Use the `engine.table_names()` to print the table names from `rcsample.db`. How many tables were there? 
 
 2. Create an engine just like you did in (1) and execute a SQL query to count the number of rows within the `employee` table. How many rows are there?
