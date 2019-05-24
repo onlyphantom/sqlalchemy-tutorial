@@ -428,7 +428,7 @@ insp <span class="token operator">=</span> inspect<span class="token punctuation
 <div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> inspect
 insp <span class="token operator">=</span> inspect<span class="token punctuation">(</span>Customer<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>insp<span class="token punctuation">.</span>all_orm_descriptors<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;name&apos;, &apos;id&apos;, &apos;country&apos;, &apos;__mapper__&apos;]
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;id&apos;, &apos;name&apos;, &apos;__mapper__&apos;, &apos;country&apos;]
 </pre></div></div><h6 class="mume-header" id="knowledge-check">Knowledge Check</h6>
 
 <div class="code-chunk" data-id="knowledge-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=10, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;knowledge-1&quot;}" class="language-python"><span class="token keyword">import</span> os
@@ -464,24 +464,29 @@ sherlock <span class="token operator">=</span> Author<span class="token punctuat
 blogpost1 <span class="token operator">=</span> Blogpost<span class="token punctuation">(</span>writtenby<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
 session<span class="token punctuation">.</span>add_all<span class="token punctuation">(</span><span class="token punctuation">[</span>sherlock<span class="token punctuation">,</span> blogpost1<span class="token punctuation">]</span><span class="token punctuation">)</span>
 session<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><details>
-<summary>Hint:</summary>
-<p>
-</p><p>No hint yet. Adding some later.</p>
-<p></p>
-</details>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><ol>
+<li>
+<p>In the code above, the <code>Author</code> and <code>Blogpost</code> models are mapped using which approach? Choose from the following:<br>
+Choice (1): Classical Mappings<br>
+Choice (2): Declarative Mappings</p>
+</li>
+<li>
+<p>Applying what you&apos;ve learned in coursebook (1), execute the following query and return a scalar using <code>.scalar()</code>:<br>
+<code>SELECT COUNT(*) FROM author</code><br>
+What is the integer value that is returned from that SQL statement?</p>
+</li>
+</ol>
 <hr>
 <h2 class="mume-header" id="summary">Summary</h2>
 
-<p>In coursebook (2), we&apos;ve covered some of the most fundamental inner-workings of SQLAlchemy. In particular, we&apos;ve learned:</p>
+<p>In coursebook (2), we learn about a crucial component of the SQLAlchemy ORM pattern: the object-relational mapping.</p>
+<p>In particular, we&apos;ve learned:</p>
 <ul>
-<li>Using <code>create_engine</code> to instantiate an <code>Engine</code> object</li>
-<li>about <code>Connection</code> and using <code>connection.execute()</code></li>
-<li>fetching results with one of the <code>fetchXXX</code> triplets</li>
-<li>about <code>ResultProxy</code> and <code>RowProxy</code></li>
-<li>queue pool and the Soft Close</li>
-<li><code>Transactions</code></li>
-<li>executing <code>ROLLBACK</code></li>
+<li>Object-relational configuration</li>
+<li>the Declarative Base</li>
+<li>two types of mappings and their differences</li>
+<li>the <code>mapper()</code> object</li>
+<li>performing runtime introspection</li>
 </ul>
 
       </div>

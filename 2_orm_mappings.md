@@ -215,25 +215,24 @@ session.add_all([sherlock, blogpost1])
 session.commit()
 ```
 
+1. In the code above, the `Author` and `Blogpost` models are mapped using which approach? Choose from the following:
+    Choice (1): Classical Mappings
+    Choice (2): Declarative Mappings
 
-<details>
-<summary>Hint:</summary>
-<p>
-
-No hint yet. Adding some later.
-</p>
-</details>
+2. Applying what you've learned in coursebook (1), execute the following query and return a scalar using `.scalar()`:
+`SELECT COUNT(*) FROM author`
+    What is the integer value that is returned from that SQL statement?
 
 ------
 
 ## Summary
 
-In coursebook (2), we've covered some of the most fundamental inner-workings of SQLAlchemy. In particular, we've learned:
+In coursebook (2), we learn about a crucial component of the SQLAlchemy ORM pattern: the object-relational mapping. 
+ 
+In particular, we've learned:
 
-- Using `create_engine` to instantiate an `Engine` object
-- about `Connection` and using `connection.execute()`
-- fetching results with one of the `fetchXXX` triplets
-- about `ResultProxy` and `RowProxy`
-- queue pool and the Soft Close
-- `Transactions`
-- executing `ROLLBACK`
+- Object-relational configuration
+- the Declarative Base
+- two types of mappings and their differences
+- the `mapper()` object
+- performing runtime introspection
