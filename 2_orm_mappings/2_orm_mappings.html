@@ -428,7 +428,7 @@ insp <span class="token operator">=</span> inspect<span class="token punctuation
 <div class="code-chunk" data-id="code-chunk-id-9" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=9, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; continue=&quot;declarative-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> inspect
 insp <span class="token operator">=</span> inspect<span class="token punctuation">(</span>Customer<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>insp<span class="token punctuation">.</span>all_orm_descriptors<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;id&apos;, &apos;name&apos;, &apos;__mapper__&apos;, &apos;country&apos;]
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;country&apos;, &apos;id&apos;, &apos;__mapper__&apos;, &apos;name&apos;]
 </pre></div></div><h6 class="mume-header" id="knowledge-check">Knowledge Check</h6>
 
 <div class="code-chunk" data-id="knowledge-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=10, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;knowledge-1&quot;}" class="language-python"><span class="token keyword">import</span> os
@@ -438,10 +438,10 @@ insp <span class="token operator">=</span> inspect<span class="token punctuation
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>declarative <span class="token keyword">import</span> declarative_base
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>orm <span class="token keyword">import</span> sessionmaker<span class="token punctuation">,</span> relationship
 
-<span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>exists<span class="token punctuation">(</span><span class="token string">&apos;blog.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    os<span class="token punctuation">.</span>remove<span class="token punctuation">(</span><span class="token string">&apos;blog.db&apos;</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>exists<span class="token punctuation">(</span><span class="token string">&apos;../data/blog.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    os<span class="token punctuation">.</span>remove<span class="token punctuation">(</span><span class="token string">&apos;../data/blog.db&apos;</span><span class="token punctuation">)</span>
 
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///blog.db&apos;</span><span class="token punctuation">)</span>
+engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/blog.db&apos;</span><span class="token punctuation">)</span>
 Session <span class="token operator">=</span> sessionmaker<span class="token punctuation">(</span>bind<span class="token operator">=</span>engine<span class="token punctuation">)</span>
 session <span class="token operator">=</span> Session<span class="token punctuation">(</span><span class="token punctuation">)</span>
 Base <span class="token operator">=</span> declarative_base<span class="token punctuation">(</span><span class="token punctuation">)</span>
@@ -467,8 +467,8 @@ session<span class="token punctuation">.</span>commit<span class="token punctuat
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"></div></div><ol>
 <li>
 <p>In the code above, the <code>Author</code> and <code>Blogpost</code> models are mapped using which approach? Choose from the following:<br>
-Choice (1): Classical Mappings<br>
-Choice (2): Declarative Mappings</p>
+A: Classical Mappings<br>
+B: Declarative Mappings</p>
 </li>
 <li>
 <p>Applying what you&apos;ve learned in coursebook (1), execute the following query and return a scalar using <code>.scalar()</code>:<br>

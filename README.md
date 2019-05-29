@@ -32,7 +32,7 @@ A common use-case is to procure a connection resource via the `Engine.connect()`
 
 ```py
 from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("select * from response order by workshop_id desc limit 10")
 print([row['comments'] for row in result])
 print([col for col in result.keys()])

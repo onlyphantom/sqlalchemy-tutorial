@@ -15,17 +15,268 @@
       
 
       <style> 
-      pre{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;direction:ltr;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;padding:1em;margin:.5em 0;overflow:auto;line-height:1.5;tab-size:4;hyphens:none;color:#c5c8c6;background-color:#27292c !important;border:#43484c;border-radius:3px}pre[class*="language-"]{padding:1em}code[class*="language-"] .token.comment,pre[class*="language-"] .token.comment,code[class*="language-"] .token.prolog,pre[class*="language-"] .token.prolog,code[class*="language-"] .token.doctype,pre[class*="language-"] .token.doctype,code[class*="language-"] .token.cdata,pre[class*="language-"] .token.cdata{color:#7C7C7C}code[class*="language-"] .token.punctuation,pre[class*="language-"] .token.punctuation{color:#96CBFE}code[class*="language-"] .namespace,pre[class*="language-"] .namespace{opacity:.7}code[class*="language-"] .token.constant,pre[class*="language-"] .token.constant{color:#99CC99}code[class*="language-"] .token.boolean,pre[class*="language-"] .token.boolean,code[class*="language-"] .token.number,pre[class*="language-"] .token.number,code[class*="language-"] .token.function-name,pre[class*="language-"] .token.function-name{color:#FF73FD}code[class*="language-"] .token.tag,pre[class*="language-"] .token.tag{color:#96CBFE}code[class*="language-"] .token.selector,pre[class*="language-"] .token.selector{color:#96CBFE}code[class*="language-"] .token.attr-name,pre[class*="language-"] .token.attr-name{color:#C6C5FE}code[class*="language-"] .token.string,pre[class*="language-"] .token.string{color:#A8FF60}code[class*="language-"] .token.char,pre[class*="language-"] .token.char{color:#FF8000}code[class*="language-"] .token.entity,pre[class*="language-"] .token.entity{color:#FFD2A7}code[class*="language-"] .token.url,pre[class*="language-"] .token.url{color:#7C7C7C}code[class*="language-"] .token.operator,pre[class*="language-"] .token.operator{color:#EDEDED}code[class*="language-"] .token.atrule,pre[class*="language-"] .token.atrule,code[class*="language-"] .token.attr-value,pre[class*="language-"] .token.attr-value,code[class*="language-"] .token.keyword,pre[class*="language-"] .token.keyword{color:#CFCB90}code[class*="language-"] .token.function,pre[class*="language-"] .token.function{color:#FFD2A7}code[class*="language-"] .token.class-name,pre[class*="language-"] .token.class-name{color:#FFD2A7}code[class*="language-"] .token.variable,pre[class*="language-"] .token.variable{color:#C6C5FE}code[class*="language-"] .token.regex,pre[class*="language-"] .token.regex,code[class*="language-"] .token.important,pre[class*="language-"] .token.important{color:#E9C062}code[class*="language-"] .token.important,pre[class*="language-"] .token.important,code[class*="language-"] .token.bold,pre[class*="language-"] .token.bold{font-weight:bold}code[class*="language-"] .token.italic,pre[class*="language-"] .token.italic{font-style:italic}code[class*="language-"] .token.entity,pre[class*="language-"] .token.entity{cursor:help}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:rgba(153,122,102,0.08);background:linear-gradient(to right, rgba(153,122,102,0.1) 70%, rgba(153,122,102,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:rgba(153,122,102,0.4);color:#f5f2f0;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px white}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}body{font-size:16px;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background:#363B40;color:#b8bfc6;fill:currentColor;font-style:normal;line-height:1.625rem;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}body hr{height:2px;border:0;margin:50px 0 !important}body h1,body h2,body h3,body h4,body h5,body h6{font-family:"Lucida Grande","Corbal",Georgia,serif;font-weight:normal;clear:both;-ms-word-wrap:break-word;word-wrap:break-word;margin:0;padding:0}body h1{font-size:2.25rem;line-height:2.5rem;margin-bottom:1.5rem;letter-spacing:-1.5px}body h2{font-size:1.5rem;line-height:1.875rem;margin-bottom:1.5rem;letter-spacing:-1px}body h3{font-size:1.125rem;line-height:1.5rem;margin-bottom:1.5rem;letter-spacing:-1px}body h4{font-size:1rem;line-height:1.375rem;margin-bottom:1.5rem}body h5{font-size:1rem;line-height:1.25rem;margin-bottom:1.5rem}body h6{font-size:1rem;line-height:1rem;margin-bottom:.75rem;font-weight:bold}body a{text-decoration:none;outline:0}body a:hover{outline:0}body a:focus{outline:thin dotted}body p{-ms-word-wrap:break-word;word-wrap:break-word}body p,body ul,body dd,body ol,body hr,body address,body pre,body table,body iframe,body .wp-caption,body .wp-audio-shortcode,body .wp-video-shortcode{margin-top:0;margin-bottom:1.5rem}body audio:not([controls]){display:none}body [hidden]{display:none}body ::-moz-selection{background:#4a89dc;color:#fff;text-shadow:none}body *.in-text-selection,body ::selection{background:#4a89dc;color:#fff;text-shadow:none}body ul,body ol{padding:0 0 0 1.875rem}body ul{list-style:square}body ol{list-style:decimal}body ul ul,body ol ol,body ul ol,body ol ul{margin:0}body b,body th,body dt,body strong{font-weight:bold}body i,body em,body dfn,body cite{font-style:italic}body blockquote{padding-left:1.875rem;margin:0 0 1.875rem 1.875rem;border-left:solid 2px #474d54;padding-left:30px;margin-top:35px}body pre,body code,body kbd,body tt,body var{background:rgba(0,0,0,0.05);font-size:.875rem;font-family:Monaco,Consolas,"Andale Mono","DejaVu Sans Mono",monospace}body pre.md-fences{padding:10px 30px;margin-bottom:20px;border:1px solid}body .md-fences .code-tooltip{bottom:-3.2em}body code,body kbd,body tt,body var{padding:2px 5px}body table{max-width:100%;width:100%;border-collapse:collapse;border-spacing:0}body th,body td{padding:5px 10px;vertical-align:top}body a{-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out}body hr{background:#474d54}body #write>*:first-child{margin-top:40px}body h1{margin-top:2em}body h1,body h2,body h3,body h4,body h5,body h6,body p,body .mathjax-exps,body .math,body li,body table{color:#DEDEDE}body a{color:#e0e0e0;text-decoration:underline}body a:hover{color:#fff}body b,body th,body dt,body strong{color:#DEDEDE}body mark{background:#D3D40E}body blockquote{color:#9DA2A6}body table a{color:#DEDEDE}body th,body td{border:solid 1px #474d54;text-align:left}body li>p{margin-top:0;margin-bottom:0}body .task-list{padding-left:0}body .task-list-item{list-style:none;margin-left:-2em}body .task-list-item .task-list-item-checkbox{margin-right:.8em}body .task-list-item input{top:.1875rem}body .task-list-item input:before{content:"";display:inline-block;width:.875rem;height:.875rem;vertical-align:middle;text-align:center;border:1px solid #b8bfc6;background-color:#363B40;margin-top:-0.4375rem}body .task-list-item input:checked:before,body .task-list-item input[checked]:before{content:'\221A';font-size:.625rem;line-height:.625rem;color:#DEDEDE}body img{max-width:100%}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}body{font-size:16px;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background:#363B40;color:#b8bfc6;fill:currentColor;font-style:normal;line-height:1.625rem;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}body hr{height:2px;border:0;margin:50px 0 !important}body h1,body h2,body h3,body h4,body h5,body h6{font-family:"Lucida Grande","Corbal",Georgia,serif;font-weight:normal;clear:both;-ms-word-wrap:break-word;word-wrap:break-word;margin:0;padding:0}body h1{font-size:2.25rem;line-height:2.5rem;margin-bottom:1.5rem;letter-spacing:-1.5px}body h2{font-size:1.5rem;line-height:1.875rem;margin-bottom:1.5rem;letter-spacing:-1px}body h3{font-size:1.125rem;line-height:1.5rem;margin-bottom:1.5rem;letter-spacing:-1px}body h4{font-size:1rem;line-height:1.375rem;margin-bottom:1.5rem}body h5{font-size:1rem;line-height:1.25rem;margin-bottom:1.5rem}body h6{font-size:1rem;line-height:1rem;margin-bottom:.75rem;font-weight:bold}body a{text-decoration:none;outline:0}body a:hover{outline:0}body a:focus{outline:thin dotted}body p{-ms-word-wrap:break-word;word-wrap:break-word}body p,body ul,body dd,body ol,body hr,body address,body pre,body table,body iframe,body .wp-caption,body .wp-audio-shortcode,body .wp-video-shortcode{margin-top:0;margin-bottom:1.5rem}body audio:not([controls]){display:none}body [hidden]{display:none}body ::-moz-selection{background:#4a89dc;color:#fff;text-shadow:none}body *.in-text-selection,body ::selection{background:#4a89dc;color:#fff;text-shadow:none}body ul,body ol{padding:0 0 0 1.875rem}body ul{list-style:square}body ol{list-style:decimal}body ul ul,body ol ol,body ul ol,body ol ul{margin:0}body b,body th,body dt,body strong{font-weight:bold}body i,body em,body dfn,body cite{font-style:italic}body blockquote{padding-left:1.875rem;margin:0 0 1.875rem 1.875rem;border-left:solid 2px #474d54;padding-left:30px;margin-top:35px}body pre,body code,body kbd,body tt,body var{background:rgba(0,0,0,0.05);font-size:.875rem;font-family:Monaco,Consolas,"Andale Mono","DejaVu Sans Mono",monospace}body pre.md-fences{padding:10px 30px;margin-bottom:20px;border:1px solid}body .md-fences .code-tooltip{bottom:-3.2em}body code,body kbd,body tt,body var{padding:2px 5px}body table{max-width:100%;width:100%;border-collapse:collapse;border-spacing:0}body th,body td{padding:5px 10px;vertical-align:top}body a{-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out}body hr{background:#474d54}body #write>*:first-child{margin-top:40px}body h1{margin-top:2em}body h1,body h2,body h3,body h4,body h5,body h6,body p,body .mathjax-exps,body .math,body li,body table{color:#DEDEDE}body a{color:#e0e0e0;text-decoration:underline}body a:hover{color:#fff}body b,body th,body dt,body strong{color:#DEDEDE}body mark{background:#D3D40E}body blockquote{color:#9DA2A6}body table a{color:#DEDEDE}body th,body td{border:solid 1px #474d54;text-align:left}body li>p{margin-top:0;margin-bottom:0}body .task-list{padding-left:0}body .task-list-item{list-style:none;margin-left:-2em}body .task-list-item .task-list-item-checkbox{margin-right:.8em}body .task-list-item input{top:.1875rem}body .task-list-item input:before{content:"";display:inline-block;width:.875rem;height:.875rem;vertical-align:middle;text-align:center;border:1px solid #b8bfc6;background-color:#363B40;margin-top:-0.4375rem}body .task-list-item input:checked:before,body .task-list-item input[checked]:before{content:'\221A';font-size:.625rem;line-height:.625rem;color:#DEDEDE}body img{max-width:100%}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
 /* Please visit the URL below for more information: */
 /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
-.markdown-preview.markdown-preview h1,
-.markdown-preview.markdown-preview h2,
+.markdown-preview.markdown-preview {
+  font-size: 0.8rem;
+  line-height: 1.2rem;
+}
+.markdown-preview.markdown-preview pre {
+  font-size: 0.7rem;
+}
+.markdown-preview.markdown-preview h1 {
+  font-size: 1.4rem;
+  margin-bottom: 1%;
+}
+.markdown-preview.markdown-preview h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1%;
+}
 .markdown-preview.markdown-preview h3,
 .markdown-preview.markdown-preview h4,
 .markdown-preview.markdown-preview h5,
 .markdown-preview.markdown-preview h6 {
-  font-weight: bolder;
-  text-decoration-line: underline;
+  margin-bottom: 1%;
 }
  
       </style>
@@ -47,7 +298,8 @@
 </li>
 <li><a href="#rowproxy-like-tuples-but-not-really"><code>RowProxy</code>: Like Tuples, but not really</a></li>
 <li><a href="#multiple-rowproxy-is-returned-as-a-list">Multiple <code>RowProxy</code> is returned as a <code>list</code></a></li>
-<li><a href="#queue-pool">Queue Pool</a></li>
+<li><a href="#queue-pool">Queue Pool</a><br>
+* <a href="#knowledge-check">Knowledge Check</a></li>
 </ul>
 </li>
 <li><a href="#transactions">Transactions</a>
@@ -90,7 +342,7 @@ engine <span class="token operator">=</span> create_engine<span class="token pun
 
 <p>A common use-case is to procure a connection resource via the <code>Engine.connect()</code> method:</p>
 <div class="code-chunk" data-id="code-chunk-id-2" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=2, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id desc LIMIT 10&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>col <span class="token keyword">for</span> col <span class="token keyword">in</span> result<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[&apos;id&apos;, &apos;workshop_id&apos;, &apos;difficulty&apos;, &apos;assistants_score&apos;, &apos;knowledge&apos;, &apos;objectives&apos;, &apos;timeliness&apos;, &apos;venue_score&apos;, &apos;satisfaction_score&apos;, &apos;comments&apos;]
@@ -99,7 +351,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 
 <p>What about <code>result</code>? Well, <code>result</code> is an instance of <code>ResultProxy</code>, a <strong>proxy</strong> object that references a DBAPI cursor and provides a largely compatible inferface with that of the DBAPI cursor. The DBAPI cursor will be closed by the <code>ResultProxy</code> when all of its result rows are exhausted. A <code>ResultProxy</code> that returns no rows, such as that of an <code>UPDATE</code> statement, releases cursor resources immediately upon construction. Let&apos;s see an example of that:</p>
 <div class="code-chunk" data-id="code-chunk-id-3" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=3, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT * FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">[</span>row<span class="token punctuation">[</span><span class="token string">&apos;comments&apos;</span><span class="token punctuation">]</span> <span class="token keyword">for</span> row <span class="token keyword">in</span> result<span class="token punctuation">]</span><span class="token punctuation">)</span>
@@ -109,7 +361,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 []
 </pre></div></div><p>Notice that after the first time, the result rows are exhausted so subsequent call to <code>print()</code> return an empty list. Similarly, when we use one of <code>fetchall()</code>, <code>fetchmany()</code> and <code>fetchone()</code> to fetch result rows, once all rows have been exhausted any subsequent rows will return an empty list.</p>
 <div class="code-chunk" data-id="code-chunk-id-4" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=4, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -122,7 +374,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 <p>The <code>first()</code> method fetches the first row and then close the result set unconditionally:</p>
 <div class="code-chunk" data-id="code-chunk-id-5" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=5, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
-connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>first<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">try</span><span class="token punctuation">:</span> 
@@ -132,9 +384,9 @@ result <span class="token operator">=</span> connection<span class="token punctu
 </pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">(4, &quot;time too short, there&apos;s no immediate benefit of bringing laptop, too much learning in short amount of time&quot;)
 Resource Closed: This result object is closed.
 </pre></div></div><p>A quick recap:</p>
-<pre data-role="codeBlock" data-info="py" class="language-python">engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
+<pre data-role="codeBlock" data-info="py" class="language-python">engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>engine<span class="token punctuation">)</span> 
-<span class="token comment"># returns: Engine(sqlite:///rcsample.db)</span>
+<span class="token comment"># returns: Engine(sqlite:///../data/rcsample.db)</span>
 
 connection <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>connection<span class="token punctuation">)</span>
@@ -149,7 +401,7 @@ result <span class="token operator">=</span> connection<span class="token punctu
 The method releases all DBAPI cursor resources but leaves the <code>ResultProxy</code> &quot;open&quot; from a semantic perspective, meaning the <code>fetchXXX()</code> methods will continue to return empty results instead of raising a <code>ResourceClosedError</code> exception :</p>
 <div class="code-chunk" data-id="code-chunk-id-6" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=6, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
 <span class="token keyword">from</span> sqlalchemy<span class="token punctuation">.</span>exc <span class="token keyword">import</span> ResourceClosedError
-connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+connection <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 result <span class="token operator">=</span> connection<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&quot;SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5&quot;</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">try</span><span class="token punctuation">:</span> 
@@ -169,7 +421,7 @@ None
 <li><code>len(fetched)</code></li>
 </ul>
 <div class="code-chunk" data-id="row-proxy-1" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=7, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot; id=&quot;row-proxy-1&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
+engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 d <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
 
@@ -236,7 +488,7 @@ True
 True
 </pre></div></div><p>This allows us to unpack each value in the tuple in a <code>for</code> operation:</p>
 <div class="code-chunk" data-id="code-chunk-id-12" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=12, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///rcsample.db&apos;</span><span class="token punctuation">)</span>
+engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/rcsample.db&apos;</span><span class="token punctuation">)</span>
 conn <span class="token operator">=</span> engine<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
 fetched <span class="token operator">=</span> conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT timeliness, satisfaction_score FROM response ORDER BY workshop_id  LIMIT 3 OFFSET 8&apos;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
@@ -306,7 +558,9 @@ True
 <li><strong>max_overflow</strong>: number of connections to allow in connection pool &quot;overflow&quot;, that is connections that can be opened above and beyond the <code>pool_size</code> setting</li>
 </ul>
 <hr>
-<p>Knowledge Check:</p>
+<h6 class="mume-header" id="knowledge-check">Knowledge Check</h6>
+
+<p>If you&apos;re attempting the coursework with a Learning Management System (LMS), enter your answers to the each question in this section into the LMS.</p>
 <ol>
 <li>
 <p>Use the <code>engine.table_names()</code> to print the table names from <code>rcsample.db</code>. How many tables were there?</p>
@@ -368,52 +622,24 @@ conn<span class="token punctuation">.</span>execute<span class="token punctuatio
 <p>The transaction &quot;scope&quot; completes when one of the two method above is called. The <code>Transaction</code> object is usually used within a try/except clause but it also implements a context manager interface so Python&apos;s <code>with</code> statement can be used in the following way:</p>
 <div class="code-chunk" data-id="code-chunk-id-15" data-cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"><div class="input-div"><pre data-role="codeBlock" data-info="py {code_chunk_offset=15, cmd=&quot;/Users/samuel/.virtualenvs/revconnexion/bin/python&quot;}" class="language-python"><span class="token keyword">import</span> os
 <span class="token keyword">from</span> sqlalchemy <span class="token keyword">import</span> create_engine
-engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///salesperson.db&apos;</span><span class="token punctuation">)</span>
-results <span class="token operator">=</span> engine<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM salesperson&apos;</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">&quot;Before transaction:&quot;</span><span class="token punctuation">,</span> results<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isfile<span class="token punctuation">(</span><span class="token string">&apos;../data/salesperson.db&apos;</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    os<span class="token punctuation">.</span>remove<span class="token punctuation">(</span><span class="token string">&apos;../data/salesperson.db&apos;</span><span class="token punctuation">)</span>
+engine <span class="token operator">=</span> create_engine<span class="token punctuation">(</span><span class="token string">&apos;sqlite:///../data/salesperson.db&apos;</span><span class="token punctuation">)</span>
+
 <span class="token keyword">with</span> engine<span class="token punctuation">.</span>begin<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> conn<span class="token punctuation">:</span>
+    conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;CREATE TABLE &quot;salesperson&quot; (&apos;</span>
+               <span class="token string">&apos;id INTEGER NOT NULL,&apos;</span>
+               <span class="token string">&apos;name VARCHAR,&apos;</span>
+               <span class="token string">&apos;PRIMARY KEY (id));&apos;</span><span class="token punctuation">)</span>
     conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;INSERT INTO &quot;salesperson&quot; (name)&apos;</span>
              <span class="token string">&apos;VALUES (&quot;Marshall&quot;)&apos;</span><span class="token punctuation">)</span>
     conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;INSERT INTO &quot;salesperson&quot; (name)&apos;</span>
              <span class="token string">&apos;VALUES (&quot;John Doe&quot;), (&quot;Margaret&quot;), (&quot;Anna&quot;)&apos;</span><span class="token punctuation">)</span>
 
 results <span class="token operator">=</span> engine<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">&apos;SELECT * FROM salesperson&apos;</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">&quot;After transaction:&quot;</span><span class="token punctuation">,</span>results<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-os<span class="token punctuation">.</span>remove<span class="token punctuation">(</span><span class="token string">&apos;salesperson.db&apos;</span><span class="token punctuation">)</span>
-</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">Traceback (most recent call last):
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 1244, in _execute_context
-    cursor, statement, parameters, context
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/default.py&quot;, line 552, in do_execute
-    cursor.execute(statement, parameters)
-sqlite3.OperationalError: no such table: salesperson
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File &quot;/Users/samuel/Documents/GU_sqlalchemy/dmkgtj8yd_code_chunk&quot;, line 4, in <module>
-    results = engine.execute(&apos;SELECT * FROM salesperson&apos;)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 2166, in execute
-    return connection.execute(statement, *multiparams, **params)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 982, in execute
-    return self._execute_text(object_, multiparams, params)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 1155, in _execute_text
-    parameters,
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 1248, in _execute_context
-    e, statement, parameters, cursor, context
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 1466, in _handle_dbapi_exception
-    util.raise_from_cause(sqlalchemy_exception, exc_info)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/util/compat.py&quot;, line 383, in raise_from_cause
-    reraise(type(exception), exception, tb=exc_tb, cause=cause)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/util/compat.py&quot;, line 128, in reraise
-    raise value.with_traceback(tb)
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/base.py&quot;, line 1244, in _execute_context
-    cursor, statement, parameters, context
-  File &quot;/Users/samuel/.virtualenvs/revconnexion/lib/python3.7/site-packages/sqlalchemy/engine/default.py&quot;, line 552, in do_execute
-    cursor.execute(statement, parameters)
-sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: salesperson
-[SQL: SELECT * FROM salesperson]
-(Background on this error at: http://sqlalche.me/e/e3q8)
-</module></pre></div></div><p>Now, have we tried a simple experiment by changing the last <code>INSERT</code> clause to say <code>INSERT INTO &quot;salespeople&quot; (name)</code> instead of <code>INSERT INTO &quot;salesperson (name)&quot;</code>, what do you think would happen?</p>
+<span class="token keyword">print</span><span class="token punctuation">(</span>results<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</pre><div class="btn-group"><div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div><div class="run-all-btn btn">all</div></div><div class="status">running...</div></div><div class="output-div"><pre class="language-text">[(1, &apos;Marshall&apos;), (2, &apos;John Doe&apos;), (3, &apos;Margaret&apos;), (4, &apos;Anna&apos;)]
+</pre></div></div><p>Now, have we tried a simple experiment by changing the last <code>INSERT</code> clause to say <code>INSERT INTO &quot;salespeople&quot; (name)</code> instead of <code>INSERT INTO &quot;salesperson (name)&quot;</code>, what do you think would happen?</p>
 <p>To verify this, you can open <code>salesperson.db</code> using any of your favorite sqlite browser, and hopefully, you will see that Marshall is not included in the table. Yes - the earlier <code>INSERT</code> clause did not take effect as the Transaction wasn&apos;t completed.</p>
 <p>This follows the &quot;A&quot; in &quot;ACID&quot;, which is short for <strong>Atomicity</strong>. All tasks of a transaction are performed or none of them are. There are no partial transactions. If a transaction starts updating 10 rows but fails after 7 rows, the database rolls back the changes to these 7 rows.</p>
 <h3 class="mume-header" id="not-everything-can-be-rolled-back">Not everything can be &quot;rolled back&quot;</h3>
@@ -457,7 +683,7 @@ results <span class="token operator">=</span> <span class="token punctuation">[<
 <p>Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.</p>
 <p>You should design your transactions not to include such statements. If you issue a statement early in a transaction that cannot be rolled back, and then another statement later fails, the full effect of the transaction cannot be rolled back in such cases by issuing a ROLLBACK statement.</p>
 </blockquote>
-<p>MySQL is not alone in how in its implementation of <code>ROLLBACK</code>. Oracle Database has this <a href="https://docs.oracle.com/database/121/SQLRF/statements_4011.htm#SQLRF01110">in their documentation</a>:</p>
+<p>MySQL is not alone in its implementation of <code>ROLLBACK</code>. Oracle Database has this <a href="https://docs.oracle.com/database/121/SQLRF/statements_4011.htm#SQLRF01110">in their documentation</a>:</p>
 <blockquote>
 <p>Oracle Database issues an implicit COMMIT under the following circumstances:</p>
 <ul>
@@ -469,7 +695,7 @@ results <span class="token operator">=</span> <span class="token punctuation">[<
 </li>
 </ul>
 </blockquote>
-<p>In simpler English, Oracle Database issues an implicit commit after any DDL statement, <a href="https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html">as does MySQL</a>.</p>
+<p>Oracle Database issues an implicit commit after any DDL statement, <a href="https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html">as does MySQL</a>.</p>
 <p>To add to the confusion, every database handles this differently.</p>
 <ul>
 <li>In <strong>SQLite</strong>, <code>ALTER</code> statements can be rolled back but not <code>CREATE TABLE</code></li>
@@ -511,7 +737,7 @@ Tables: [&apos;salesperson&apos;]
 Keys: [&apos;id&apos;, &apos;name&apos;]
 Results: []
 Values: None
-</pre></div></div><p>While <code>.rollback()</code> is invoked, the <code>CREATE TABLE</code> was <strong>not rolled back</strong>. The any modifications on the database resulting from the other 3 commands, repectively <code>INSERT</code>, <code>ALTER</code> and <code>ALTER</code>,  were rolled back however. This explained the resulting output from <code>tbl_names</code> and <code>keys</code> but an empty list in <code>results</code>.</p>
+</pre></div></div><p>While <code>.rollback()</code> is invoked, the <code>CREATE TABLE</code> was <strong>not rolled back</strong>. Any modifications on the database resulting from the other 3 commands, repectively <code>INSERT</code>, <code>ALTER</code> and <code>ALTER</code>,  were rolled back however. This explained the resulting output from <code>tbl_names</code> and <code>keys</code> but an empty list in <code>results</code>.</p>
 <p>In your mind, do the following experiment: imagine what would happen if we move the line of code:<br>
 <code>results += conn.execute(&apos;SELECT * FROM salesperson&apos;).fetchall()</code><br>
 such that it is before the two lines that perform the <code>ALTER TABLE</code> command.</p>

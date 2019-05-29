@@ -18,6 +18,7 @@ toc:
 		* [`RowProxy`: Like Tuples, but not really](#rowproxy-like-tuples-but-not-really)
 		* [Multiple `RowProxy` is returned as a `list`](#multiple-rowproxy-is-returned-as-a-list)
 		* [Queue Pool](#queue-pool)
+					* [Knowledge Check](#knowledge-check)
 	* [Transactions](#transactions)
 		* [Not everything can be "rolled back"](#not-everything-can-be-rolled-back)
 		* [What exactly is being rolled back?](#what-exactly-is-being-rolled-back)
@@ -58,7 +59,7 @@ A common use-case is to procure a connection resource via the `Engine.connect()`
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("SELECT * FROM response ORDER BY workshop_id desc LIMIT 10")
 print([col for col in result.keys()])
 ```
@@ -71,7 +72,7 @@ What about `result`? Well, `result` is an instance of `ResultProxy`, a **proxy**
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("SELECT * FROM response ORDER BY workshop_id LIMIT 5")
 print([row['comments'] for row in result])
 print([row['comments'] for row in result])
@@ -82,7 +83,7 @@ Notice that after the first time, the result rows are exhausted so subsequent ca
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5")
 print(result.fetchall())
 print(result.fetchall())
@@ -98,7 +99,7 @@ The `first()` method fetches the first row and then close the result set uncondi
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
 from sqlalchemy.exc import ResourceClosedError
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5")
 print(result.first())
 try: 
@@ -109,9 +110,9 @@ except ResourceClosedError as e:
 
 A quick recap:
 ```py
-engine = create_engine('sqlite:///rcsample.db')
+engine = create_engine('sqlite:///../data/rcsample.db')
 print(engine) 
-# returns: Engine(sqlite:///rcsample.db)
+# returns: Engine(sqlite:///../data/rcsample.db)
 
 connection = engine.connect()
 print(connection)
@@ -129,7 +130,7 @@ The method releases all DBAPI cursor resources but leaves the `ResultProxy` "ope
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
 from sqlalchemy.exc import ResourceClosedError
-connection = create_engine('sqlite:///rcsample.db').connect()
+connection = create_engine('sqlite:///../data/rcsample.db').connect()
 result = connection.execute("SELECT satisfaction_score, comments FROM response ORDER BY workshop_id LIMIT 5")
 print(result.fetchall())
 try: 
@@ -149,7 +150,7 @@ Most of what you do with SQLAlchemy involves fetching some rows from a database.
 
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python" id="row-proxy-1"}
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///rcsample.db')
+engine = create_engine('sqlite:///../data/rcsample.db')
 conn = engine.connect()
 d = {}
 
@@ -218,7 +219,7 @@ print(isinstance(fetched.items()[0], tuple))
 This allows us to unpack each value in the tuple in a `for` operation:
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///rcsample.db')
+engine = create_engine('sqlite:///../data/rcsample.db')
 conn = engine.connect()
 fetched = conn.execute('SELECT timeliness, satisfaction_score FROM response ORDER BY workshop_id  LIMIT 3 OFFSET 8').fetchall()
 
@@ -285,6 +286,8 @@ The several parameters in our engine creation call above:
 
 ---
 ###### Knowledge Check
+If you're attempting the coursework with a Learning Management System (LMS), enter your answers to the each question in this section into the LMS. 
+
 1. Use the `engine.table_names()` to print the table names from `rcsample.db`. How many tables were there? 
 
 2. Create an engine just like you did in (1) and execute a SQL query to count the number of rows within the `employee` table. How many rows are there?
@@ -350,18 +353,22 @@ The transaction "scope" completes when one of the two method above is called. Th
 ```py {cmd="/Users/samuel/.virtualenvs/revconnexion/bin/python"}
 import os
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///salesperson.db')
-results = engine.execute('SELECT * FROM salesperson')
-print("Before transaction:", results.fetchall())
+if os.path.isfile('../data/salesperson.db'):
+    os.remove('../data/salesperson.db')
+engine = create_engine('sqlite:///../data/salesperson.db')
+
 with engine.begin() as conn:
+    conn.execute('CREATE TABLE "salesperson" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR,'
+               'PRIMARY KEY (id));')
     conn.execute('INSERT INTO "salesperson" (name)'
              'VALUES ("Marshall")')
     conn.execute('INSERT INTO "salesperson" (name)'
              'VALUES ("John Doe"), ("Margaret"), ("Anna")')
 
 results = engine.execute('SELECT * FROM salesperson')
-print("After transaction:",results.fetchall())
-os.remove('salesperson.db')
+print(results.fetchall())
 ```
 Now, have we tried a simple experiment by changing the last `INSERT` clause to say `INSERT INTO "salespeople" (name)` instead of `INSERT INTO "salesperson (name)"`, what do you think would happen?
 
@@ -412,7 +419,7 @@ This brings us to another concept in database systems: **not all statements can 
 >
 > You should design your transactions not to include such statements. If you issue a statement early in a transaction that cannot be rolled back, and then another statement later fails, the full effect of the transaction cannot be rolled back in such cases by issuing a ROLLBACK statement.
 
-MySQL is not alone in how in its implementation of `ROLLBACK`. Oracle Database has this [in their documentation](https://docs.oracle.com/database/121/SQLRF/statements_4011.htm#SQLRF01110):
+MySQL is not alone in its implementation of `ROLLBACK`. Oracle Database has this [in their documentation](https://docs.oracle.com/database/121/SQLRF/statements_4011.htm#SQLRF01110):
 
 > Oracle Database issues an implicit COMMIT under the following circumstances:
 >
@@ -420,7 +427,7 @@ MySQL is not alone in how in its implementation of `ROLLBACK`. Oracle Database h
 > 
 > - After any data definition language (DDL) statement that completes without an error
 
-In simpler English, Oracle Database issues an implicit commit after any DDL statement, [as does MySQL](https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
+Oracle Database issues an implicit commit after any DDL statement, [as does MySQL](https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
 
 To add to the confusion, every database handles this differently.
 - In **SQLite**, `ALTER` statements can be rolled back but not `CREATE TABLE`
@@ -462,7 +469,7 @@ print(f"Results: {results}")
 print(f"Values: {vals}")
 ```
 
-While `.rollback()` is invoked, the `CREATE TABLE` was **not rolled back**. The any modifications on the database resulting from the other 3 commands, repectively `INSERT`, `ALTER` and `ALTER`,  were rolled back however. This explained the resulting output from `tbl_names` and `keys` but an empty list in `results`. 
+While `.rollback()` is invoked, the `CREATE TABLE` was **not rolled back**. Any modifications on the database resulting from the other 3 commands, repectively `INSERT`, `ALTER` and `ALTER`,  were rolled back however. This explained the resulting output from `tbl_names` and `keys` but an empty list in `results`. 
 
 In your mind, do the following experiment: imagine what would happen if we move the line of code:
 `results += conn.execute('SELECT * FROM salesperson').fetchall()`

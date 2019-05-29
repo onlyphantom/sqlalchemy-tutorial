@@ -187,10 +187,10 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
-if os.path.exists('blog.db'):
-    os.remove('blog.db')
+if os.path.exists('../data/blog.db'):
+    os.remove('../data/blog.db')
 
-engine = create_engine('sqlite:///blog.db')
+engine = create_engine('sqlite:///../data/blog.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
@@ -216,8 +216,8 @@ session.commit()
 ```
 
 1. In the code above, the `Author` and `Blogpost` models are mapped using which approach? Choose from the following:
-    Choice (1): Classical Mappings
-    Choice (2): Declarative Mappings
+    A: Classical Mappings
+    B: Declarative Mappings
 
 2. Applying what you've learned in coursebook (1), execute the following query and return a scalar using `.scalar()`:
 `SELECT COUNT(*) FROM author`
