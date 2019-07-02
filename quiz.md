@@ -6,12 +6,14 @@
 - [ ] 3
 - [ ] 4
 - [ ] 5
++ 2 points
 
 2. Create an engine just like you did in (1) and execute a SQL query to count the number of rows within the `employee` table. How many rows are there?
 - [ ] 18
 - [ ] 28
 - [ ] 38
 - [ ] 48
++ 2 points
 
 3. What is the output of `len(fetched.values())`?
 - [ ] Empty list
@@ -24,6 +26,7 @@
 - [ ] 2
 - [ ] 3
 - [ ] 4
++ 2 points
 
 5. Is `results` an instance of `list`?
 - [ ] Yes, it is a list
@@ -34,6 +37,7 @@
 6. From the code you find in the Knowledge Check section, the `Author` and `Blogpost` models are mapped using which approach? 
 - [ ] Classical Mappings
 - [ ] Declarative Mappings
++ 1 point
 
 7. Applying what you've learned in coursebook (1), execute the following query and return a scalar using `.scalar()`:
 `SELECT COUNT(*) FROM author`
@@ -51,4 +55,5 @@ What is the integer value that is returned from that SQL statement?
 - [x] Alpha
 - [ ] Beta
 - [ ] Delta
-- [ ] Mu 
+- [ ] Mu
++ 0 point
