@@ -43,7 +43,7 @@
 `SELECT COUNT(*) FROM author`
 
 What is the integer value that is returned from that SQL statement?
-- [ ] No integer returned. Just a `Resultroxy` object.
+- [ ] No integer returned. Just a `ResultProxy` object.
 - [ ] 0
 - [ ] 1
 
