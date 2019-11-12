@@ -1,7 +1,7 @@
 # Quizzes
 > Answer the following questions by referencing the Knowledge Check sections in `1_connections`.
 
-1. Use the `engine.table_names()` to print the table names from `rcsample.db` located in the `/data` folder. How many tables were there? 
+1. Use the `engine.table_names()` to print the table names from `rcsample.db` located in the `/data` folder. How many tables are there? 
     - [ ] None
     - [ ] 3
     - [ ] 4
@@ -37,6 +37,7 @@
 6. From the code you find in the Knowledge Check section, the `Author` and `Blogpost` models are mapped using which approach? 
     - [ ] Classical Mappings
     - [ ] Declarative Mappings
+    - [ ] None of the above
     + 1 point
 
 7. Applying what you've learned in coursebook (1), execute the following query and return a scalar using `.scalar()`:
@@ -53,5 +54,5 @@
     - [x] Alpha
     - [ ] Beta
     - [ ] Delta
-    - [ ] Mu
+    - [ ] Lambda
     + 0 point
